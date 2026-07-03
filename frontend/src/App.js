@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { SearchBar } from './components/SearchBar';
+import { HeroSection } from './components/HeroSection';
 import { ProductGrid } from './components/ProductGrid';
 import { searchProducts, getRecommendations } from './api';
 
@@ -8,10 +8,12 @@ function App() {
     const [recommendations, setRecommendations] = useState([]);
     const [loading, setLoading] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
+    const [searched, setSearched] = useState(false);
 
     const handleSearch = async (query) => {
         setLoading(true);
         setSearchQuery(query);
+        setSearched(true);
         try {
             const result = await searchProducts(query, 10);
             if (result.results) {
@@ -24,6 +26,8 @@ function App() {
                     if (recResult.recommendations) {
                         setRecommendations(recResult.recommendations);
                     }
+                } else {
+                    setRecommendations([]);
                 }
             }
         } catch (error) {
@@ -40,7 +44,10 @@ function App() {
             const recResult = await getRecommendations(productId, 5);
             if (recResult.recommendations) {
                 setRecommendations(recResult.recommendations);
-                window.scrollTo(0, document.getElementById('recommendations')?.offsetTop || 800);
+                window.scrollTo({
+                    top: document.getElementById('recommendations')?.offsetTop - 50 || 800,
+                    behavior: 'smooth'
+                });
             }
         } catch (error) {
             console.error('Failed to get recommendations:', error);
@@ -50,66 +57,70 @@ function App() {
     };
 
     return (
-        <div className="min-h-screen bg-gray-100">
-            {/* Header */}
-            <div className="bg-gradient-to-r from-blue-600 to-blue-800 text-white py-12">
-                <div className="max-w-7xl mx-auto px-4">
-                    <h1 className="text-5xl font-bold mb-2">🎯 Product Recommendations</h1>
-                    <p className="text-xl text-blue-100">
-                        Discover products you'll love based on your search
-                    </p>
-                </div>
-            </div>
+        <div className="min-h-screen bg-slate-50 font-sans selection:bg-indigo-500 selection:text-white flex flex-col">
+            {/* Hero Section */}
+            <HeroSection onSearch={handleSearch} loading={loading} />
 
             {/* Main Content */}
-            <div className="max-w-7xl mx-auto px-4 py-12">
-                {/* Search */}
-                <SearchBar onSearch={handleSearch} loading={loading} />
+            <main className="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 w-full relative -mt-8 z-20">
+                
+                {/* Empty State / Welcome */}
+                {!loading && !searched && selectedProducts.length === 0 && (
+                    <div className="text-center py-20 bg-white rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-100">
+                        <div className="w-24 h-24 bg-indigo-50 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <svg className="w-12 h-12 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                            </svg>
+                        </div>
+                        <h2 className="text-2xl font-bold text-slate-800 mb-2">Ready to explore?</h2>
+                        <p className="text-slate-500 max-w-md mx-auto">
+                            Search for any product above and our AI will recommend the best matches for you.
+                        </p>
+                    </div>
+                )}
 
                 {/* Selected Products */}
                 {selectedProducts.length > 0 && (
-                    <>
+                    <div className="animate-fade-in-up">
                         <ProductGrid
                             products={selectedProducts}
-                            title="Search Results"
+                            title={`Search Results for "${searchQuery}"`}
                             loading={false}
                             onViewDetails={handleViewDetails}
                         />
-                    </>
+                    </div>
                 )}
 
                 {/* Recommendations */}
                 {recommendations.length > 0 && (
-                    <>
-                        <div id="recommendations" className="mt-16 pt-8 border-t-2 border-gray-300">
-                            <ProductGrid
-                                products={recommendations}
-                                title="Recommended For You"
-                                loading={loading}
-                                onViewDetails={handleViewDetails}
-                                showReason={true}
-                            />
-                        </div>
-                    </>
-                )}
-
-                {/* Empty State */}
-                {!loading && selectedProducts.length === 0 && recommendations.length === 0 && (
-                    <div className="text-center py-20">
-                        <p className="text-gray-500 text-xl">
-                            👆 Search for a product to get started
-                        </p>
+                    <div id="recommendations" className="mt-16 pt-16 border-t border-slate-200 animate-fade-in-up">
+                        <ProductGrid
+                            products={recommendations}
+                            title="Highly Recommended For You"
+                            loading={loading}
+                            onViewDetails={handleViewDetails}
+                            showReason={true}
+                        />
                     </div>
                 )}
-            </div>
+            </main>
 
             {/* Footer */}
-            <footer className="bg-gray-800 text-white py-8 mt-16">
-                <div className="max-w-7xl mx-auto px-4 text-center">
-                    <p>Built with React + FastAPI + Machine Learning</p>
-                    <p className="text-gray-400 text-sm mt-2">
-                        Hybrid Recommendation Engine | 2024
-                    </p>
+            <footer className="bg-slate-900 text-slate-400 py-12 mt-auto">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center">
+                    <div className="mb-4 md:mb-0">
+                        <div className="flex items-center gap-2 mb-2">
+                            <div className="w-8 h-8 rounded bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center">
+                                <span className="text-white font-bold text-xs">AI</span>
+                            </div>
+                            <span className="text-white font-bold text-lg">Recommender</span>
+                        </div>
+                        <p className="text-sm">Built with React, FastAPI & Scikit-Learn</p>
+                    </div>
+                    <div className="text-sm text-center md:text-right">
+                        <p>© 2026 Hybrid Recommendation Engine.</p>
+                        <p>All rights reserved.</p>
+                    </div>
                 </div>
             </footer>
         </div>
