@@ -4,59 +4,36 @@ from pathlib import Path
 
 # LOAD DATA
 print("Loading data...")
-csv_files = list(Path('data').glob('*.csv'))
+file_path = Path('data/amazon.csv')
 
-if len(csv_files) == 0:
-    print("ERROR: No CSV found in data/ folder")
+if not file_path.exists():
+    print(f"ERROR: {file_path} not found")
     exit()
 
-df = pd.read_csv(csv_files[0])
-print(f"Loaded: {csv_files[0].name} ({df.shape[0]} rows, {df.shape[1]} cols)")
+df = pd.read_csv(file_path)
+print(f"Loaded: {file_path.name} ({df.shape[0]} rows, {df.shape[1]} cols)")
 
 # BASIC CLEANING
 print("\n[CLEANING] Removing duplicates...")
 df = df.drop_duplicates()
 print(f"  After drop_duplicates: {df.shape[0]} rows")
 
-print("[CLEANING] Handling missing values...")
-# Jika ada kolom price kosong, drop baris tersebut
-if 'price' in df.columns:
-    df = df.dropna(subset=['price'])
-    print(f"  Dropped rows dengan price NaN: {df.shape[0]} rows left")
-
-# Jika ada kolom rating kosong, isi dengan median
-if 'rating' in df.columns:
-    missing_ratings = df['rating'].isna().sum()
-    df['rating'] = df['rating'].fillna(df['rating'].median())
-    print(f"  Filled {missing_ratings} missing ratings with median")
-
-# STANDARDIZE COLUMNS (sesuaikan dengan actual column names)
+# STANDARDIZE COLUMNS
 print("\n[STANDARDIZING] Column names...")
 
-# Mapping: bisa berbeda tergantung dataset
-# Adjust sesuai output TAHAP 2
 column_mapping = {
     'product_id': 'product_id',
     'product_name': 'product_name',
-    'title': 'product_name',  # alternate column name
-    'name': 'product_name',
-    
     'category': 'category',
-    'product_category': 'category',
-    'asin': 'product_id',  # for Amazon data
-    'price': 'price',
+    'discounted_price': 'price',
     'rating': 'rating',
-    'average_rating': 'rating',
-    'num_reviews': 'num_reviews',
-    'review_count': 'num_reviews',
-    'description': 'description',
+    'rating_count': 'num_reviews',
+    'about_product': 'description',
 }
 
-# Rename columns yang ada
 df = df.rename(columns={k: v for k, v in column_mapping.items() if k in df.columns})
 
-# Pastikan kolom penting ada
-required_cols = ['product_id', 'product_name', 'category', 'price', 'rating']
+required_cols = ['product_id', 'product_name', 'category', 'price', 'rating', 'num_reviews']
 missing_cols = [col for col in required_cols if col not in df.columns]
 
 if missing_cols:
@@ -66,12 +43,27 @@ if missing_cols:
 
 print(f"  Standardized. Columns: {df.columns.tolist()}")
 
-# TYPE CONVERSION
+# STRING PARSING AND CONVERSION
 print("\n[CONVERSION] Data types...")
-df['price'] = pd.to_numeric(df['price'], errors='coerce')
-df['rating'] = pd.to_numeric(df['rating'], errors='coerce')
-df['num_reviews'] = pd.to_numeric(df['num_reviews'], errors='coerce')
-print(f"  Converted to numeric types")
+
+def clean_price(x):
+    if isinstance(x, str):
+        x = x.replace('₹', '').replace(',', '')
+    return pd.to_numeric(x, errors='coerce')
+
+def clean_number(x):
+    if isinstance(x, str):
+        x = x.replace(',', '').replace('|', '')
+    return pd.to_numeric(x, errors='coerce')
+
+df['price'] = df['price'].apply(clean_price)
+df['num_reviews'] = df['num_reviews'].apply(clean_number)
+df['rating'] = df['rating'].apply(clean_number)
+
+# Handling missing values
+df = df.dropna(subset=['price'])
+df['rating'] = df['rating'].fillna(df['rating'].median())
+df['num_reviews'] = df['num_reviews'].fillna(0)
 
 # DROP INVALID ROWS
 print("\n[FILTERING] Removing invalid entries...")
@@ -112,8 +104,8 @@ print("="*70)
 print(f"\nShape: {df.shape[0]:,} products × {df.shape[1]} features")
 print(f"\nCategories: {df['category'].nunique()} unique")
 print(f"  Top 5: {df['category'].value_counts().head().to_dict()}")
-print(f"\nPrice Range: ${df['price'].min():.2f} - ${df['price'].max():.2f}")
-print(f"  Median: ${df['price'].median():.2f}")
+print(f"\nPrice Range: ₹{df['price'].min():.2f} - ₹{df['price'].max():.2f}")
+print(f"  Median: ₹{df['price'].median():.2f}")
 print(f"\nRating Range: {df['rating'].min():.1f} - {df['rating'].max():.1f}")
 print(f"  Mean: {df['rating'].mean():.2f}")
 print(f"\nReviews per product:")
