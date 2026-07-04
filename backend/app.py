@@ -25,7 +25,8 @@ app.add_middleware(
         "http://localhost:3000",
         "https://myapp.vercel.app",
         "https://myrecommendation.vercel.app",
-        "https://e-commerce-recommendation-engine-production.up.railway.app"
+        "https://e-commerce-recommendation-engine-production.up.railway.app",
+        "https://e-commerce-recommendation-engine.vercel.app"
     ],
     allow_credentials=True,
     allow_methods=["*"],
