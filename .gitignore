@@ -2,7 +2,14 @@ venv/
 __pycache__/
 *.pyc
 .env
+node_modules/
+frontend/node_modules/
 
-data/*.csv
+# Raw download data
+data/kaggle_download/
 
+# Kaggle credentials
+kaggle.json
+
+# Model files (too large for git, auto-generated on deploy)
 models/*.pkl

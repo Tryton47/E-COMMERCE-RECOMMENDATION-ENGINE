@@ -32,7 +32,7 @@ function App() {
             }
         } catch (error) {
             console.error('Search failed:', error);
-            alert('Search failed. Make sure API is running on localhost:8000');
+            alert('Search failed. The server may be starting up — please wait 30 seconds and try again.');
         } finally {
             setLoading(false);
         }
