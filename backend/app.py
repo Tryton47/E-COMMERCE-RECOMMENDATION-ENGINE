@@ -2,14 +2,23 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import pandas as pd
+import os
 import sys
-sys.path.insert(0, '../')
+
+# Setup robust paths
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.dirname(BASE_DIR)
+sys.path.insert(0, PROJECT_ROOT)
+
 from models.hybrid_recommender import HybridRecommendationEngine
 
 # Load data & model
 print("Loading data & model...")
-products_df = pd.read_csv('../data/products_clean.csv')
-engine = HybridRecommendationEngine.load('../models/recommendation_engine.pkl')
+DATA_PATH = os.path.join(PROJECT_ROOT, 'data', 'products_clean.csv')
+MODEL_PATH = os.path.join(PROJECT_ROOT, 'models', 'recommendation_engine.pkl')
+
+products_df = pd.read_csv(DATA_PATH)
+engine = HybridRecommendationEngine.load(MODEL_PATH)
 
 # FastAPI app
 app = FastAPI(
