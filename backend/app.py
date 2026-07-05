@@ -105,8 +105,8 @@ async def search_products(request: SearchRequest):
         
         # Search di name dan category
         mask = (
-            products_df['product_name'].str.lower().str.contains(query) |
-            products_df['category'].str.lower().str.contains(query)
+            products_df['product_name'].str.lower().str.contains(query, na=False) |
+            products_df['category'].str.lower().str.contains(query, na=False)
         )
         
         results = products_df[mask].head(request.limit).to_dict('records')
