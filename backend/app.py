@@ -168,5 +168,5 @@ if __name__ == "__main__":
     import uvicorn
     # Railway passes the port dynamically via the PORT environment variable
     port = int(os.environ.get("PORT", 8000))
-    # Binding to "0.0.0.0" and "::" allows both IPv4 and IPv6 connections (Railway uses IPv6 internally)
-    uvicorn.run("backend.app:app", host="0.0.0.0", port=port)
+    # Binding to "::" allows both IPv4 and IPv6 connections
+    uvicorn.run("backend.app:app", host="::", port=port)
