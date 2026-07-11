@@ -1,7 +1,7 @@
 import axios from 'axios';
 
-// Update ini sesuai dengan lokasi API kamu
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000';
+// Hardcoded URL Railway agar tidak pusing mengatur Environment Variable di Vercel
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://e-commerce-recommendation-engine-production.up.railway.app';
 
 const api = axios.create({
     baseURL: API_BASE_URL,
