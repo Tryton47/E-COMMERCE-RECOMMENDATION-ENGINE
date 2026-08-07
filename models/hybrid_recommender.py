@@ -150,14 +150,21 @@ class HybridRecommendationEngine:
         recommendations = []
         for idx in top_indices:
             if hybrid_scores[idx] > 0:
+                row = self.products_df.iloc[idx]
+                
+                # Safe type conversion & NaN protection
+                price_val = row.get('price', 0.0)
+                rating_val = row.get('rating', 0.0)
+                reviews_val = row.get('num_reviews', 0)
+
                 recommendation = {
-                    'product_id': str(self.products_df.iloc[idx]['product_id']),
-                    'name': str(self.products_df.iloc[idx]['product_name']),
-                    'category': str(self.products_df.iloc[idx]['category']),
-                    'price': float(self.products_df.iloc[idx]['price']),
-                    'rating': float(self.products_df.iloc[idx]['rating']),
-                    'num_reviews': int(self.products_df.iloc[idx]['num_reviews']),
-                    'score': float(hybrid_scores[idx]),
+                    'product_id': str(row['product_id']),
+                    'name': str(row.get('product_name', row.get('name', ''))),
+                    'category': str(row.get('category', 'Uncategorized')),
+                    'price': float(price_val) if pd.notna(price_val) else 0.0,
+                    'rating': float(rating_val) if pd.notna(rating_val) else 0.0,
+                    'num_reviews': int(reviews_val) if pd.notna(reviews_val) else 0,
+                    'score': float(hybrid_scores[idx]) if pd.notna(hybrid_scores[idx]) else 0.0,
                     'reason': self._explain_recommendation(
                         idx, 
                         content_scores[idx],
