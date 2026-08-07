@@ -3,9 +3,10 @@
 A hybrid ML-powered recommendation system using collaborative filtering, 
 content-based filtering, and popularity scoring.
 
-## 🚀 Live Demo
+## 🚀 Live Demo & API Status
 
-**[→ Open Live App](https://myapp.vercel.app)**
+- **Frontend App**: [→ Open Live App](https://myapp.vercel.app)
+- **API Status & Troubleshooting**: If live Railway backend is asleep/offline (HTTP 404), the React frontend gracefully alerts the user and seamlessly supports local fallback on `http://localhost:8000`.
 
 Try searching for products and get personalized recommendations!
 

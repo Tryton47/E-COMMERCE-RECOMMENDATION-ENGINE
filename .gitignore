@@ -7,6 +7,7 @@ frontend/node_modules/
 
 # Raw download data
 data/kaggle_download/
+data/amazon.csv
 
 # Kaggle credentials
 kaggle.json
