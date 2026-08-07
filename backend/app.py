@@ -70,17 +70,28 @@ class SearchRequest(BaseModel):
 @app.get("/")
 async def root():
     """Root endpoint — confirms API is live"""
-    return {"status": "ok", "message": "Recommendation Engine API is running", "products": len(products_df)}
+    return {
+        "status": "ok", 
+        "message": "Recommendation Engine API is running", 
+        "products": len(products_df) if 'products_df' in globals() else 0
+    }
 
 @app.get("/health")
 async def health_check():
     """Health check endpoint"""
-    return {"status": "ok", "message": "API is running", "products_loaded": len(products_df)}
+    return {
+        "status": "ok", 
+        "message": "API is running", 
+        "products_loaded": len(products_df) if 'products_df' in globals() else 0
+    }
 
 @app.post("/api/recommend")
 async def get_recommendations(request: RecommendRequest):
     """Get product recommendations"""
     try:
+        if not request.product_id:
+            return {"status": "error", "message": "product_id is required", "recommendations": []}
+
         recommendations = engine.recommend(
             product_id=request.product_id,
             n=request.n,
@@ -92,13 +103,18 @@ async def get_recommendations(request: RecommendRequest):
             "recommendations": recommendations
         }
     except Exception as e:
-        return {"status": "error", "message": str(e)}
+        import traceback
+        traceback.print_exc()
+        return {"status": "error", "message": str(e), "recommendations": []}
 
 @app.post("/api/search")
 async def search_products(request: SearchRequest):
     """Search products by name/category"""
     try:
-        query = request.query.lower()
+        if not request.query:
+            return {"status": "success", "query": "", "results": [], "count": 0}
+
+        query = request.query.lower().strip()
 
         # Search in name and category with NaN protection
         mask = (
@@ -116,9 +132,9 @@ async def search_products(request: SearchRequest):
                 val = row[col]
                 if pd.isna(val):
                     record[col] = None
-                elif isinstance(val, (np.integer,)):
+                elif isinstance(val, (np.integer, int)):
                     record[col] = int(val)
-                elif isinstance(val, (np.floating,)):
+                elif isinstance(val, (np.floating, float)):
                     record[col] = float(val)
                 else:
                     record[col] = val
@@ -133,28 +149,30 @@ async def search_products(request: SearchRequest):
     except Exception as e:
         import traceback
         traceback.print_exc()
-        return {"status": "error", "message": str(e)}
+        return {"status": "error", "message": str(e), "results": [], "count": 0}
 
 @app.get("/api/products/{product_id}")
 async def get_product(product_id: str):
     """Get single product detail"""
     try:
-        product = products_df[
-            products_df['product_id'] == product_id
-        ].iloc[0].to_dict()
+        matched = products_df[products_df['product_id'] == product_id]
+        if matched.empty:
+            return {"status": "error", "message": "Product not found"}
+
+        product = matched.iloc[0].to_dict()
 
         # Safe type conversion
         for key, val in product.items():
             if pd.isna(val):
                 product[key] = None
-            elif isinstance(val, (np.integer,)):
+            elif isinstance(val, (np.integer, int)):
                 product[key] = int(val)
-            elif isinstance(val, (np.floating,)):
+            elif isinstance(val, (np.floating, float)):
                 product[key] = float(val)
 
         return {"status": "success", "product": product}
-    except Exception:
-        return {"status": "error", "message": "Product not found"}
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
 
 @app.post("/api/interactions/log")
 async def log_interaction(user_id: int, product_id: str, action: str):
