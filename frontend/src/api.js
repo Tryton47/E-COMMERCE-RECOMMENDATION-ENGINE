@@ -1,10 +1,15 @@
 import axios from 'axios';
 
-// Hardcoded URL Railway agar tidak pusing mengatur Environment Variable di Vercel
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://e-commerce-recommendation-engine-production.up.railway.app';
+// Dynamic API URL resolution with robust fallbacks
+const API_BASE_URL = 
+    process.env.REACT_APP_API_URL || 
+    (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
+        ? 'http://localhost:8000' 
+        : 'https://e-commerce-recommendation-engine-production.up.railway.app');
 
 const api = axios.create({
     baseURL: API_BASE_URL,
+    timeout: 10000, // 10s timeout
     headers: {
         'Content-Type': 'application/json',
     },

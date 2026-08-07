@@ -9,30 +9,34 @@ function App() {
     const [loading, setLoading] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const [searched, setSearched] = useState(false);
+    const [apiError, setApiError] = useState(null);
 
     const handleSearch = async (query) => {
         setLoading(true);
         setSearchQuery(query);
         setSearched(true);
+        setApiError(null);
         try {
             const result = await searchProducts(query, 10);
-            if (result.results) {
+            if (result && result.results) {
                 setSelectedProducts(result.results);
                 
                 // Auto-recommend jika ada hasil
                 if (result.results.length > 0) {
                     const firstProductId = result.results[0].product_id;
                     const recResult = await getRecommendations(firstProductId, 5);
-                    if (recResult.recommendations) {
+                    if (recResult && recResult.recommendations) {
                         setRecommendations(recResult.recommendations);
                     }
                 } else {
                     setRecommendations([]);
                 }
+            } else if (result && result.status === 'error') {
+                setApiError(result.message || 'Error occurred while searching.');
             }
         } catch (error) {
             console.error('Search failed:', error);
-            alert('Search failed. The server may be starting up — please wait 30 seconds and try again.');
+            setApiError('Unable to connect to Recommendation API. If running locally, make sure backend server is active on port 8000.');
         } finally {
             setLoading(false);
         }
@@ -40,9 +44,10 @@ function App() {
 
     const handleViewDetails = async (productId) => {
         setLoading(true);
+        setApiError(null);
         try {
             const recResult = await getRecommendations(productId, 5);
-            if (recResult.recommendations) {
+            if (recResult && recResult.recommendations) {
                 setRecommendations(recResult.recommendations);
                 window.scrollTo({
                     top: document.getElementById('recommendations')?.offsetTop - 50 || 800,
@@ -51,6 +56,7 @@ function App() {
             }
         } catch (error) {
             console.error('Failed to get recommendations:', error);
+            setApiError('Failed to fetch recommendations for this product.');
         } finally {
             setLoading(false);
         }
@@ -64,6 +70,23 @@ function App() {
             {/* Main Content */}
             <main className="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 w-full relative -mt-8 z-20">
                 
+                {/* API Error Alert */}
+                {apiError && (
+                    <div className="mb-8 p-4 bg-rose-50 border border-rose-200 rounded-2xl text-rose-700 flex items-center justify-between shadow-sm">
+                        <div className="flex items-center gap-3">
+                            <svg className="w-6 h-6 text-rose-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            <p className="text-sm font-medium">{apiError}</p>
+                        </div>
+                        <button 
+                            onClick={() => setApiError(null)} 
+                            className="text-rose-400 hover:text-rose-600 font-bold ml-4"
+                        >
+                            ✕
+                        </button>
+                    </div>
+                )}
                 {/* Empty State / Welcome */}
                 {!loading && !searched && selectedProducts.length === 0 && (
                     <div className="text-center py-20 bg-white rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-100">
