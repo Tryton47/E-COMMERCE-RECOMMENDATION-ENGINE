@@ -36,7 +36,12 @@ function App() {
             }
         } catch (error) {
             console.error('Search failed:', error);
-            setApiError('Unable to connect to Recommendation API. If running locally, make sure backend server is active on port 8000.');
+            const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+            if (isLocal) {
+                setApiError('Unable to connect to Recommendation API. Please make sure backend server is running on port 8000 (python app.py).');
+            } else {
+                setApiError('Unable to connect to live Recommendation API (Railway backend is offline or sleeping). Please verify backend deployment or run locally.');
+            }
         } finally {
             setLoading(false);
         }
