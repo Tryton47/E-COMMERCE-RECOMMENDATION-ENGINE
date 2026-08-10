@@ -1,0 +1,13 @@
+.git
+.gitignore
+venv
+__pycache__
+*.pyc
+.env
+node_modules
+frontend/
+models/*.pkl
+data/kaggle_download/
+kaggle.json
+README.md
+render.yaml
