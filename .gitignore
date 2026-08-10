@@ -12,5 +12,5 @@ data/amazon.csv
 # Kaggle credentials
 kaggle.json
 
-# Model files (too large for git, auto-generated on deploy)
-models/*.pkl
+# Model files
+# models/*.pkl
