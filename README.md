@@ -116,6 +116,30 @@ npm start
 # App runs on http://localhost:3000
 ```
 
+## ☁️ Vercel Deployment (100% Free & No Credit Card Required)
+
+Anda dapat men-deploy baik Frontend (React) maupun Backend (Python FastAPI) ke **Vercel** secara gratis tanpa kartu kredit:
+
+### 1. Deploy Backend (Python FastAPI)
+1. Masuk ke **[Vercel Dashboard](https://vercel.com)** dan buat project baru.
+2. Hubungkan repository GitHub Anda.
+3. Ubah nama project menjadi `ecommerce-recommendation-backend` (atau nama lain).
+4. Di bagian **Framework Preset**, pilih **Other**.
+5. Di bagian **Root Directory**, biarkan default (`.` atau root).
+6. Klik **Deploy**. Vercel akan otomatis membaca file `vercel.json` dan mem-build FastAPI server Anda!
+7. Catat URL backend baru Anda (misal: `https://ecommerce-recommendation-backend.vercel.app`).
+
+### 2. Deploy Frontend (React)
+1. Buat project baru lagi di Vercel Dashboard.
+2. Hubungkan repository GitHub yang sama.
+3. Ubah nama project menjadi `ecommerce-recommendation-frontend` (atau nama lain).
+4. Di bagian **Root Directory**, pilih folder **`frontend`**.
+5. Di bagian **Environment Variables**, tambahkan:
+   - **Key**: `REACT_APP_API_URL`
+   - **Value**: URL backend Vercel Anda (dari langkah 1).
+6. Klik **Deploy**.
+
+
 ## 📚 API Documentation
 
 When running locally, visit: **http://localhost:8000/docs**
