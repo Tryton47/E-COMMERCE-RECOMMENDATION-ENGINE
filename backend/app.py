@@ -32,16 +32,16 @@ if os.path.exists(MODEL_PATH):
     try:
         engine = HybridRecommendationEngine.load(MODEL_PATH)
     except Exception as e:
-        print(f"[STARTUP] Failed to load model ({e}). Training from scratch...")
+        print(f"[STARTUP] Failed to load model ({e}). Training from scratch in memory...")
         interactions_df = pd.read_csv(INTERACTIONS_PATH)
         engine = HybridRecommendationEngine(products_df, interactions_df)
-        engine.save(MODEL_PATH)
+        # Skip saving to disk on serverless (read-only filesystem)
 else:
-    print("[STARTUP] No pre-trained model found. Training from scratch...")
+    print("[STARTUP] No pre-trained model found. Training from scratch in memory...")
     interactions_df = pd.read_csv(INTERACTIONS_PATH)
     engine = HybridRecommendationEngine(products_df, interactions_df)
-    engine.save(MODEL_PATH)
-    print("[STARTUP] Model trained and saved!")
+    # Skip saving to disk on serverless (read-only filesystem)
+    print("[STARTUP] Model trained in memory!")
 
 print("[STARTUP] API ready!")
 
