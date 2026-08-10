@@ -29,7 +29,13 @@ print(f"[STARTUP] Loaded {len(products_df)} products")
 # Load or train model
 if os.path.exists(MODEL_PATH):
     print("[STARTUP] Loading pre-trained model...")
-    engine = HybridRecommendationEngine.load(MODEL_PATH)
+    try:
+        engine = HybridRecommendationEngine.load(MODEL_PATH)
+    except Exception as e:
+        print(f"[STARTUP] Failed to load model ({e}). Training from scratch...")
+        interactions_df = pd.read_csv(INTERACTIONS_PATH)
+        engine = HybridRecommendationEngine(products_df, interactions_df)
+        engine.save(MODEL_PATH)
 else:
     print("[STARTUP] No pre-trained model found. Training from scratch...")
     interactions_df = pd.read_csv(INTERACTIONS_PATH)
@@ -37,7 +43,7 @@ else:
     engine.save(MODEL_PATH)
     print("[STARTUP] Model trained and saved!")
 
-print("[STARTUP] ✅ API ready!")
+print("[STARTUP] API ready!")
 
 # ============ FASTAPI APP ============
 app = FastAPI(

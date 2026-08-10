@@ -32,7 +32,7 @@ class HybridRecommendationEngine:
         print("  [3/3] Calculating popularity scores...")
         self._calculate_popularity()
         
-        print("✅ Model initialized!")
+        print("Model initialized!")
     
     def _build_content_matrix(self):
         """Build TF-IDF matrix from product descriptions"""
@@ -197,12 +197,12 @@ class HybridRecommendationEngine:
         os.makedirs(os.path.dirname(filepath), exist_ok=True)
         with open(filepath, 'wb') as f:
             pickle.dump(self, f)
-        print(f"✅ Model saved: {filepath}")
+        print(f"Model saved: {filepath}")
     
     @staticmethod
     def load(filepath='models/recommendation_engine.pkl'):
         """Load trained model from file"""
         with open(filepath, 'rb') as f:
             model = pickle.load(f)
-        print(f"✅ Model loaded: {filepath}")
+        print(f"Model loaded: {filepath}")
         return model

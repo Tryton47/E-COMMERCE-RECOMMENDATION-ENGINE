@@ -41,4 +41,4 @@ for i, rec in enumerate(recommendations, 1):
     print(f"   Score: {rec['score']:.3f}")
     print(f"   Why: {rec['reason']}")
 
-print("\n✅ Training complete!")
+print("\nTraining complete!")
