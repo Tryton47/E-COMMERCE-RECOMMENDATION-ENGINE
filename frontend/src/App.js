@@ -40,7 +40,7 @@ function App() {
             if (isLocal) {
                 setApiError('Unable to connect to Recommendation API. Please make sure backend server is running on port 8000 (python app.py).');
             } else {
-                setApiError('Unable to connect to live Recommendation API (Railway backend is offline or sleeping). Please verify backend deployment or run locally.');
+                setApiError('Unable to connect to Recommendation API backend. The service may be starting up — please try again in a moment.');
             }
         } finally {
             setLoading(false);
