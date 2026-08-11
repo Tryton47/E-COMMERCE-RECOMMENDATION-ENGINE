@@ -9,37 +9,48 @@ const API_BASE_URL =
 
 const api = axios.create({
     baseURL: API_BASE_URL,
-    timeout: 10000, // 10s timeout
+    timeout: 60000, // 60s timeout — handles Vercel serverless cold starts
     headers: {
         'Content-Type': 'application/json',
     },
 });
 
+// Helper: retry once on timeout (cold start)
+const withRetry = async (fn, retries = 1) => {
+    for (let i = 0; i <= retries; i++) {
+        try {
+            return await fn();
+        } catch (err) {
+            const isTimeout = err.code === 'ECONNABORTED' || err.message?.includes('timeout');
+            if (i < retries && isTimeout) {
+                console.warn(`[API] Timeout — retrying (attempt ${i + 2})...`);
+                await new Promise(r => setTimeout(r, 2000));
+                continue;
+            }
+            throw err;
+        }
+    }
+};
+
 export const searchProducts = async (query, limit = 10) => {
-    try {
+    return withRetry(async () => {
         const response = await api.post('/api/search', {
             query: query,
             limit: limit,
         });
         return response.data;
-    } catch (error) {
-        console.error('Search error:', error);
-        throw error;
-    }
+    });
 };
 
 export const getRecommendations = async (productId, n = 5, userId = null) => {
-    try {
+    return withRetry(async () => {
         const response = await api.post('/api/recommend', {
             product_id: productId,
             n: n,
             user_id: userId,
         });
         return response.data;
-    } catch (error) {
-        console.error('Recommendation error:', error);
-        throw error;
-    }
+    });
 };
 
 export const getProduct = async (productId) => {

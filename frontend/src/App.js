@@ -16,8 +16,16 @@ function App() {
         setSearchQuery(query);
         setSearched(true);
         setApiError(null);
+
+        // Show a "warming up" hint after 5 seconds
+        const warmupHint = setTimeout(() => {
+            setApiError('⏳ First request may take up to 30 seconds while the API warms up. Please wait...');
+        }, 5000);
+
         try {
             const result = await searchProducts(query, 10);
+            clearTimeout(warmupHint);
+            setApiError(null);
             if (result && result.results) {
                 setSelectedProducts(result.results);
                 
@@ -35,12 +43,13 @@ function App() {
                 setApiError(result.message || 'Error occurred while searching.');
             }
         } catch (error) {
+            clearTimeout(warmupHint);
             console.error('Search failed:', error);
             const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
             if (isLocal) {
                 setApiError('Unable to connect to Recommendation API. Please make sure backend server is running on port 8000 (python app.py).');
             } else {
-                setApiError('Unable to connect to Recommendation API backend. The service may be starting up — please try again in a moment.');
+                setApiError('Unable to connect to API. The server is warming up — please try searching again in 10 seconds.');
             }
         } finally {
             setLoading(false);
