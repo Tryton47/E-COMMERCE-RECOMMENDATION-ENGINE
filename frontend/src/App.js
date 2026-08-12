@@ -91,19 +91,29 @@ function App() {
                 
                 {/* API Error Alert */}
                 {apiError && (
-                    <div className="mb-8 p-4 bg-rose-50 border border-rose-200 rounded-2xl text-rose-700 flex items-center justify-between shadow-sm">
+                    <div className="mb-8 p-4 bg-rose-50 border border-rose-200 rounded-2xl text-rose-700 flex items-center justify-between shadow-sm animate-fade-in">
                         <div className="flex items-center gap-3">
                             <svg className="w-6 h-6 text-rose-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
                             <p className="text-sm font-medium">{apiError}</p>
                         </div>
-                        <button 
-                            onClick={() => setApiError(null)} 
-                            className="text-rose-400 hover:text-rose-600 font-bold ml-4"
-                        >
-                            ✕
-                        </button>
+                        <div className="flex items-center gap-2">
+                            {searchQuery && (
+                                <button
+                                    onClick={() => handleSearch(searchQuery)}
+                                    className="px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold rounded-lg transition-colors shadow-xs"
+                                >
+                                    Retry Search
+                                </button>
+                            )}
+                            <button 
+                                onClick={() => setApiError(null)} 
+                                className="text-rose-400 hover:text-rose-600 font-bold p-1"
+                            >
+                                ✕
+                            </button>
+                        </div>
                     </div>
                 )}
                 {/* Empty State / Welcome */}
