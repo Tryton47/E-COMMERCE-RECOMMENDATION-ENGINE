@@ -23,8 +23,20 @@ print(f"[STARTUP] Data path: {DATA_PATH} (exists: {os.path.exists(DATA_PATH)})")
 print(f"[STARTUP] Model path: {MODEL_PATH} (exists: {os.path.exists(MODEL_PATH)})")
 
 # Load product data
-products_df = pd.read_csv(DATA_PATH)
-print(f"[STARTUP] Loaded {len(products_df)} products")
+products_json_path = os.path.join(PROJECT_ROOT, 'data', 'products.json')
+if os.path.exists(products_json_path):
+    print("[STARTUP] Loading fast JSON dataset...")
+    products_df = pd.read_json(products_json_path)
+else:
+    print("[STARTUP] Loading CSV dataset...")
+    products_df = pd.read_csv(DATA_PATH)
+
+# Pre-index lowercase search terms for high-speed querying
+products_df['_search_text'] = (
+    products_df['product_name'].fillna('').astype(str).str.lower() + " " + 
+    products_df['category'].fillna('').astype(str).str.lower()
+)
+print(f"[STARTUP] Loaded & pre-indexed {len(products_df)} products")
 
 # Load or train model
 if os.path.exists(MODEL_PATH):
@@ -122,11 +134,14 @@ async def search_products(request: SearchRequest):
 
         query = request.query.lower().strip()
 
-        # Search in name and category with NaN protection
-        mask = (
-            products_df['product_name'].str.lower().str.contains(query, na=False) |
-            products_df['category'].str.lower().str.contains(query, na=False)
-        )
+        # Fast search via pre-indexed search text column
+        if '_search_text' in products_df.columns:
+            mask = products_df['_search_text'].str.contains(query, regex=False)
+        else:
+            mask = (
+                products_df['product_name'].str.lower().str.contains(query, na=False) |
+                products_df['category'].str.lower().str.contains(query, na=False)
+            )
 
         results = products_df[mask].head(request.limit)
         
