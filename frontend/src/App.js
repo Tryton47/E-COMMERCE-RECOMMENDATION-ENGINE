@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { HeroSection } from './components/HeroSection';
 import { ProductGrid } from './components/ProductGrid';
-import { searchProducts, getRecommendations } from './api';
+import { searchProducts, getRecommendations, pingBackend } from './api';
 
 function App() {
     const [selectedProducts, setSelectedProducts] = useState([]);
@@ -10,6 +10,11 @@ function App() {
     const [searchQuery, setSearchQuery] = useState('');
     const [searched, setSearched] = useState(false);
     const [apiError, setApiError] = useState(null);
+
+    // Warm up backend serverless instance on page load
+    useEffect(() => {
+        pingBackend();
+    }, []);
 
     const handleSearch = async (query) => {
         setLoading(true);

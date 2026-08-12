@@ -77,4 +77,14 @@ export const logInteraction = async (userId, productId, action) => {
     }
 };
 
+export const pingBackend = async () => {
+    try {
+        const response = await api.get('/health');
+        return response.data;
+    } catch (error) {
+        console.warn('Background warmup ping skipped:', error.message);
+        return null;
+    }
+};
+
 export default api;
