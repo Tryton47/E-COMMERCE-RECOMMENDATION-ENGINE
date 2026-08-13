@@ -12,7 +12,12 @@
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "backend/app.py"
+      "dest": "backend/app.py",
+      "headers": {
+        "Access-Control-Allow-Origin": "https://e-commerce-recommendation-engine.vercel.app",
+        "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+        "Access-Control-Allow-Headers": "Content-Type, Accept"
+      }
     }
   ]
 }

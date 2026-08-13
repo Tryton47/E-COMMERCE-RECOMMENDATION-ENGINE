@@ -64,13 +64,20 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# CORS — allow all origins for maximum compatibility
+# CORS — explicitly allow frontend origin (credentials=True requires specific origins, not wildcard)
+ALLOWED_ORIGINS = [
+    "https://e-commerce-recommendation-engine.vercel.app",
+    "https://ecommerce-recommendation-backend.vercel.app",
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_origins=ALLOWED_ORIGINS,
+    allow_credentials=False,  # Must be False when using wildcard or broad origins
+    allow_methods=["GET", "POST", "OPTIONS"],
+    allow_headers=["Content-Type", "Accept", "Authorization"],
 )
 
 # ============ REQUEST MODELS ============
