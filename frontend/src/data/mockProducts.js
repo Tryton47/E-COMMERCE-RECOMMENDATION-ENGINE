@@ -1,0 +1,107 @@
+// Fallback product dataset for offline / warming-up mode
+export const MOCK_PRODUCTS = [
+    {
+        product_id: "DEMO-001",
+        product_name: "Apple iPhone 15 Pro (128 GB) - Natural Titanium",
+        category: "Electronics|Mobiles|Smartphones",
+        discounted_price: "₹1,27,990",
+        actual_price: "₹1,34,900",
+        discount_percentage: "5%",
+        rating: 4.6,
+        rating_count: "8,420",
+        about_product: "Forged in titanium. Featuring the groundbreaking A17 Pro chip, customizable Action button, and the most powerful iPhone camera system ever.",
+        img_link: "https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=600&auto=format&fit=crop&q=80",
+        product_link: "#"
+    },
+    {
+        product_id: "DEMO-002",
+        product_name: "Samsung Galaxy S24 Ultra 5G (Titanium Gray, 12GB, 256GB)",
+        category: "Electronics|Mobiles|Smartphones",
+        discounted_price: "₹1,29,999",
+        actual_price: "₹1,44,999",
+        discount_percentage: "10%",
+        rating: 4.5,
+        rating_count: "6,150",
+        about_product: "Meet Galaxy S24 Ultra, the ultimate form of Galaxy Ultra with a new titanium exterior and a 17.25cm (6.8\") flat display. Galaxy AI is here.",
+        img_link: "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=600&auto=format&fit=crop&q=80",
+        product_link: "#"
+    },
+    {
+        product_id: "DEMO-003",
+        product_name: "Sony WH-1000XM5 Wireless Noise Canceling Headphones",
+        category: "Electronics|Audio|Headphones",
+        discounted_price: "₹29,990",
+        actual_price: "₹34,990",
+        discount_percentage: "14%",
+        rating: 4.7,
+        rating_count: "12,890",
+        about_product: "Industry-leading noise cancellation optimized to two processors and 8 microphones. Crystal clear hands-free calling with 4 beamforming microphones.",
+        img_link: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600&auto=format&fit=crop&q=80",
+        product_link: "#"
+    },
+    {
+        product_id: "DEMO-004",
+        product_name: "Apple MacBook Air M3 Chip (15-inch, 16GB RAM, 512GB SSD)",
+        category: "Computers|Laptops|MacBook",
+        discounted_price: "₹1,44,900",
+        actual_price: "₹1,54,900",
+        discount_percentage: "6%",
+        rating: 4.8,
+        rating_count: "3,210",
+        about_product: "Lean. Mean. M3 machine. MacBook Air sails through work and play — and the M3 chip brings even greater capabilities to the world's most popular laptop.",
+        img_link: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=600&auto=format&fit=crop&q=80",
+        product_link: "#"
+    },
+    {
+        product_id: "DEMO-005",
+        product_name: "Anker 65W Fast Charger USB-C GaN III Trio",
+        category: "Electronics|Accessories|Chargers & Cables",
+        discounted_price: "₹3,499",
+        actual_price: "₹5,999",
+        discount_percentage: "42%",
+        rating: 4.5,
+        rating_count: "18,900",
+        about_product: "High-speed charging for laptops, phones, and tablets simultaneously. Powered by GaN II technology with dynamic power allocation.",
+        img_link: "https://images.unsplash.com/photo-1583863788434-e58a36330cf0?w=600&auto=format&fit=crop&q=80",
+        product_link: "#"
+    },
+    {
+        product_id: "DEMO-006",
+        product_name: "Logitech MX Master 3S Wireless Performance Mouse",
+        category: "Computers|Accessories|Mice",
+        discounted_price: "₹9,495",
+        actual_price: "₹10,995",
+        discount_percentage: "14%",
+        rating: 4.7,
+        rating_count: "15,400",
+        about_product: "Quiet Clicks and 8K DPI tracking on any surface — even glass. Ergonomic design crafted for precision, speed, and comfort.",
+        img_link: "https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?w=600&auto=format&fit=crop&q=80",
+        product_link: "#"
+    },
+    {
+        product_id: "DEMO-007",
+        product_name: "Dell UltraSharp 27 4K USB-C Hub Monitor (U2723QE)",
+        category: "Computers|Monitors|4K",
+        discounted_price: "₹52,990",
+        actual_price: "₹65,000",
+        discount_percentage: "18%",
+        rating: 4.6,
+        rating_count: "2,840",
+        about_product: "Be your most productive on a 27-inch 4K monitor with brilliant color and contrast that features groundbreaking IPS Black technology.",
+        img_link: "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=600&auto=format&fit=crop&q=80",
+        product_link: "#"
+    },
+    {
+        product_id: "DEMO-008",
+        product_name: "Belkin BoostCharge Pro 3-in-1 Wireless Charging Stand with MagSafe",
+        category: "Electronics|Accessories|Chargers & Cables",
+        discounted_price: "₹12,990",
+        actual_price: "₹14,990",
+        discount_percentage: "13%",
+        rating: 4.4,
+        rating_count: "4,120",
+        about_product: "Rethink how you charge. MagSafe for iPhone, Apple Watch magnetic fast charger, and pad to wirelessly charge AirPods.",
+        img_link: "https://images.unsplash.com/photo-1622445268465-843d63d6641b?w=600&auto=format&fit=crop&q=80",
+        product_link: "#"
+    }
+];
