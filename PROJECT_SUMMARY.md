@@ -2,7 +2,7 @@
 
 ## Timeline
 - **Total Duration**: 10-11 days
-- **Phases**: Setup → Data → ML → Backend → Frontend → Testing → Deploy
+- **Phases**: Setup → Data → ML → Backend → Frontend → Testing → Deploy → Resilient Infrastructure Refactor
 
 ## Key Achievements
 
@@ -22,41 +22,22 @@
 ✅ Built production-grade FastAPI server
 ✅ Implemented 4 REST endpoints with error handling
 ✅ Auto-generated Swagger documentation
-✅ Deployed on Railway with zero downtime
+✅ Multi-path file resolution for serverless environments (Vercel, Docker, Railway, Render)
+✅ Category-based heuristic recommendation fallback if ML pickle fails
 
 ### Frontend Development
 ✅ Built responsive React app with Tailwind CSS
 ✅ Created reusable components (SearchBar, ProductCard, ProductGrid)
-✅ Implemented smooth UX with loading states
+✅ Implemented smooth UX with loading states & zero-downtime client-side fallback engine
 ✅ Deployed on Vercel with auto-scaling
 
-### Portfolio Value
-- Demonstrates full-stack capabilities (Python/ML + React/JS)
-- Shows production-ready code quality
-- Real-world problem solving (e-commerce recommendations)
-- Performance optimization (0.35s inference time)
-- Proper documentation & deployment
-
-## Lessons Learned
-
-1. **Data Quality Matters**: Garbage in, garbage out. Proper preprocessing 
-   increased accuracy significantly.
-
-2. **Hybrid Approaches Win**: Single algorithm (content-based or collaborative)
-   has trade-offs. Hybrid balances accuracy with diversity.
-
-3. **User Experience is Key**: Pretty frontend makes big difference in 
-   portfolio presentation.
-
-4. **Monitoring & Evaluation**: Without metrics (Precision, Coverage, etc),
-   can't improve the system.
-
-### Backend & Infrastructure Optimization
-✅ Migrated backend to Vercel Serverless (100% free, zero cost hosting)
-✅ Optimized model storage (reduced pickle bundle size from 146MB to 5.5MB)
-✅ Converted dataset to fast JSON format for 10x faster startup times
-✅ Implemented background warmup pinging in React frontend for zero-latency user experience
-✅ Pre-indexed search queries for sub-millisecond API response times
+### Infrastructure & Resilient Architecture (6-Commit Refactor)
+1. **Commit 1 (`fix(backend)`)**: Optimized FastAPI serverless cold-start, wildcard CORS, and multi-path file loading.
+2. **Commit 2 (`config(vercel)`)**: Updated `vercel.json` with wildcard CORS headers and full HTTP method support.
+3. **Commit 3 (`feat(frontend)`)**: Built local JS recommendation engine & dataset (`mockProducts.js` & `localRecommender.js`) for zero-downtime offline fallback.
+4. **Commit 4 (`fix(frontend)`)**: Integrated auto-retry & auto-failover in `api.js` to serve local fallback when remote API cold starts.
+5. **Commit 5 (`refactor(frontend)`)**: Redesigned UI error handling with non-intrusive status banners and one-click "Retry Live API" button.
+6. **Commit 6 (`docs(project)`)**: Updated test verification suite and project documentation.
 
 ## Deployment Checklist
 
@@ -64,35 +45,7 @@
 ✓ Backend deployed on Vercel Serverless (`https://ecommerce-recommendation-backend.vercel.app`)
 ✓ Frontend deployed on Vercel (`https://e-commerce-recommendation-engine.vercel.app`)
 ✓ API documentation complete
+✓ Zero-downtime client fallback enabled for portfolio presentation
 ✓ README with screenshots/links
 ✓ Code clean & commented
-✓ No hardcoded secrets (using .env)
-✓ Error handling implemented
 ✓ CORS configured for production
-
-## How to Showcase This Project
-
-### In Interview
-1. "This is a hybrid recommendation engine I built for my portfolio"
-2. "It uses 240K real products and 100K user interactions"
-3. "I implemented content-based + collaborative filtering + popularity scoring"
-4. "Achieved 38.4% precision on purchase predictions"
-5. "Full-stack: Python ML backend + React frontend, deployed on Railway + Vercel"
-6. "Can I show you the live app? [Share URL]"
-
-### In CV
-- E-Commerce Recommendation Engine (Python, FastAPI, React, scikit-learn)
-- Built hybrid ML model with 38.4% Precision@5
-- 240K products, 100K user interactions
-- Deployed on Railway (backend) + Vercel (frontend)
-- Live: [Link]
-
-### On GitHub
-- Pin this repo on profile
-- Add topic tags: "machine-learning", "recommendation-system", "fastapi", "react"
-- Keep README up-to-date with screenshots
-
----
-
-This project took ~10-11 days to complete and demonstrates junior-to-mid 
-level full-stack ML engineering capabilities.
