@@ -10,6 +10,7 @@ function App() {
     const [searchQuery, setSearchQuery] = useState('');
     const [searched, setSearched] = useState(false);
     const [apiError, setApiError] = useState(null);
+    const [isFallbackMode, setIsFallbackMode] = useState(false);
 
     // Warm up backend serverless instance on page load
     useEffect(() => {
@@ -21,20 +22,20 @@ function App() {
         setSearchQuery(query);
         setSearched(true);
         setApiError(null);
-
-        // Show a "warming up" hint after 5 seconds
-        const warmupHint = setTimeout(() => {
-            setApiError('⏳ First request may take up to 30 seconds while the API warms up. Please wait...');
-        }, 5000);
+        setIsFallbackMode(false);
 
         try {
             const result = await searchProducts(query, 10);
-            clearTimeout(warmupHint);
             setApiError(null);
+
+            if (result && result.isLocalFallback) {
+                setIsFallbackMode(true);
+            }
+
             if (result && result.results) {
                 setSelectedProducts(result.results);
                 
-                // Auto-recommend jika ada hasil
+                // Auto-recommend if results found
                 if (result.results.length > 0) {
                     const firstProductId = result.results[0].product_id;
                     const recResult = await getRecommendations(firstProductId, 5);
@@ -48,13 +49,12 @@ function App() {
                 setApiError(result.message || 'Error occurred while searching.');
             }
         } catch (error) {
-            clearTimeout(warmupHint);
             console.error('Search failed:', error);
             const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
             if (isLocal) {
-                setApiError('Unable to connect to Recommendation API. Please make sure backend server is running on port 8000 (python app.py).');
+                setApiError('Unable to connect to Recommendation API. Please ensure backend server is running on port 8000.');
             } else {
-                setApiError('Unable to connect to API. The server is warming up — please try searching again in 10 seconds.');
+                setApiError('Unable to connect to live API server. Switched to offline demo mode.');
             }
         } finally {
             setLoading(false);
@@ -68,6 +68,9 @@ function App() {
             const recResult = await getRecommendations(productId, 5);
             if (recResult && recResult.recommendations) {
                 setRecommendations(recResult.recommendations);
+                if (recResult.isLocalFallback) {
+                    setIsFallbackMode(true);
+                }
                 window.scrollTo({
                     top: document.getElementById('recommendations')?.offsetTop - 50 || 800,
                     behavior: 'smooth'
@@ -89,9 +92,33 @@ function App() {
             {/* Main Content */}
             <main className="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 w-full relative -mt-8 z-20">
                 
+                {/* Fallback / Offline Demo Banner */}
+                {isFallbackMode && (
+                    <div className="mb-8 p-4 bg-amber-50 border border-amber-200 rounded-2xl text-amber-800 flex items-center justify-between shadow-xs animate-fade-in">
+                        <div className="flex items-center gap-3">
+                            <span className="flex h-3 w-3 relative">
+                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                                <span className="relative inline-flex rounded-full h-3 w-3 bg-amber-500"></span>
+                            </span>
+                            <div>
+                                <p className="text-sm font-semibold">⚡ Demo Mode (API Warming Up / Offline)</p>
+                                <p className="text-xs text-amber-700">Showing local fallback search & AI recommendations while remote backend serverless warms up.</p>
+                            </div>
+                        </div>
+                        {searchQuery && (
+                            <button
+                                onClick={() => handleSearch(searchQuery)}
+                                className="px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold rounded-lg transition-colors shadow-xs flex-shrink-0"
+                            >
+                                Retry Live API
+                            </button>
+                        )}
+                    </div>
+                )}
+
                 {/* API Error Alert */}
-                {apiError && (
-                    <div className="mb-8 p-4 bg-rose-50 border border-rose-200 rounded-2xl text-rose-700 flex items-center justify-between shadow-sm animate-fade-in">
+                {apiError && !isFallbackMode && (
+                    <div className="mb-8 p-4 bg-rose-50 border border-rose-200 rounded-2xl text-rose-700 flex items-center justify-between shadow-xs animate-fade-in">
                         <div className="flex items-center gap-3">
                             <svg className="w-6 h-6 text-rose-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -116,6 +143,7 @@ function App() {
                         </div>
                     </div>
                 )}
+
                 {/* Empty State / Welcome */}
                 {!loading && !searched && selectedProducts.length === 0 && (
                     <div className="text-center py-20 bg-white rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-100">
@@ -126,7 +154,7 @@ function App() {
                         </div>
                         <h2 className="text-2xl font-bold text-slate-800 mb-2">Ready to explore?</h2>
                         <p className="text-slate-500 max-w-md mx-auto">
-                            Search for any product above and our AI will recommend the best matches for you.
+                            Search for any product above (e.g. <span className="font-semibold text-indigo-600 cursor-pointer" onClick={() => handleSearch('phone')}>phone</span>, <span className="font-semibold text-indigo-600 cursor-pointer" onClick={() => handleSearch('cable')}>cable</span>, <span className="font-semibold text-indigo-600 cursor-pointer" onClick={() => handleSearch('laptop')}>laptop</span>) and our AI engine will recommend the best matches for you.
                         </p>
                     </div>
                 )}
