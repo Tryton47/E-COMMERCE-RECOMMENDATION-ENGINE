@@ -13,6 +13,10 @@ const normalizeProduct = (p) => ({
     price: typeof p.price === 'number' ? p.price : parseFloat(String(p.discounted_price || p.price || '49.99').replace(/[^0-9.]/g, '')) || 49.99
 });
 
+export const getTopAutocompleteSuggestions = (query, limit = 5) => {
+    return localSearchProducts(query, limit);
+};
+
 export const localSearchProducts = (query, limit = 10) => {
     if (!query || !query.trim()) {
         return { status: 'success', query: '', results: [], count: 0, isLocalFallback: true };
