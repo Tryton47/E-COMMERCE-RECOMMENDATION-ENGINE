@@ -33,7 +33,7 @@ const safePrice = (item) => {
         if (!isNaN(num) && num > 0)
             return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(num);
     }
-    return null; // no price to display
+    return null;
 };
 
 const safeRating = (item) => {
@@ -45,7 +45,7 @@ const safeReviews = (item) => {
     const r = item.num_reviews || item.rating_count;
     if (typeof r === 'number') return r.toLocaleString();
     if (typeof r === 'string') return r;
-    return '1,200';
+    return '1,2k';
 };
 
 export const ProductCard = ({ product, onViewDetails, showReason = false }) => {
@@ -68,94 +68,115 @@ export const ProductCard = ({ product, onViewDetails, showReason = false }) => {
 
     return (
         <div
-            className={`group bg-white rounded-2xl overflow-hidden border shadow-sm
-                       flex flex-col h-full relative cursor-pointer
-                       transition-all duration-300 ease-out
-                       ${isHovered ? 'shadow-xl -translate-y-2 border-indigo-200' : 'border-slate-200 hover:border-indigo-100'}`}
             onClick={() => onViewDetails(product.product_id)}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
+            className="group flex flex-col h-full relative cursor-pointer rounded-2xl overflow-hidden transition-all duration-300"
+            style={{
+                background: isHovered
+                    ? 'linear-gradient(145deg, rgba(30,35,60,0.98), rgba(20,25,50,0.98))'
+                    : 'linear-gradient(145deg, rgba(22,27,48,0.95), rgba(15,19,40,0.95))',
+                border: isHovered
+                    ? '1px solid rgba(99,102,241,0.5)'
+                    : '1px solid rgba(255,255,255,0.08)',
+                boxShadow: isHovered
+                    ? '0 20px 60px rgba(99,102,241,0.2), 0 0 0 1px rgba(99,102,241,0.2)'
+                    : '0 4px 24px rgba(0,0,0,0.3)',
+                transform: isHovered ? 'translateY(-6px)' : 'translateY(0)',
+            }}
         >
-            {/* Match Badge */}
+            {/* AI Match badge */}
             {showReason && matchPercent && (
-                <div className="absolute top-3 right-3 z-10 bg-indigo-600 text-white text-[10px] font-extrabold px-2.5 py-1 rounded-full shadow-md flex items-center gap-1">
+                <div className="absolute top-3 right-3 z-10 text-[10px] font-extrabold px-2.5 py-1 rounded-full flex items-center gap-1"
+                    style={{ background: 'linear-gradient(135deg,#6366f1,#8b5cf6)', color: '#fff', boxShadow: '0 4px 12px rgba(99,102,241,0.4)' }}>
                     ✨ {matchPercent}%
                 </div>
             )}
 
-            {/* Discount Badge */}
+            {/* Discount badge */}
             {discount && (
-                <div className="absolute top-3 left-3 z-10 bg-emerald-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm">
+                <div className="absolute top-3 left-3 z-10 text-[10px] font-bold px-2 py-0.5 rounded-full"
+                    style={{ background: 'rgba(16,185,129,0.2)', border: '1px solid rgba(16,185,129,0.4)', color: '#6ee7b7' }}>
                     {discount} OFF
                 </div>
             )}
 
-            {/* Image */}
-            <div className={`w-full h-48 sm:h-52 flex items-center justify-center relative overflow-hidden p-4 transition-colors duration-300 ${isHovered ? 'bg-indigo-50/50' : 'bg-slate-50'}`}>
+            {/* Image area */}
+            <div className="w-full h-48 sm:h-52 flex items-center justify-center p-5 relative overflow-hidden transition-colors duration-300"
+                style={{ background: isHovered ? 'rgba(99,102,241,0.08)' : 'rgba(255,255,255,0.03)' }}>
                 <img
                     src={imageSrc}
                     alt={title}
                     onError={() => setImgError(true)}
-                    className={`w-full h-full object-contain transition-transform duration-500 ease-out drop-shadow-sm ${isHovered ? 'scale-110' : 'scale-100'}`}
+                    className="w-full h-full object-contain drop-shadow-lg transition-transform duration-500"
+                    style={{ transform: isHovered ? 'scale(1.1)' : 'scale(1)' }}
                     loading="lazy"
                 />
             </div>
 
+            {/* Divider */}
+            <div style={{ height: '1px', background: isHovered ? 'rgba(99,102,241,0.3)' : 'rgba(255,255,255,0.06)', transition: 'background 0.3s' }} />
+
             {/* Content */}
             <div className="p-4 sm:p-5 flex flex-col flex-grow">
-                {/* Category */}
-                <div className="flex items-center gap-1.5 mb-2 flex-wrap">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-full border border-indigo-100/60">
+                {/* Category chip */}
+                <div className="mb-2">
+                    <span className="text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full"
+                        style={{ background: 'rgba(99,102,241,0.18)', border: '1px solid rgba(99,102,241,0.3)', color: '#a5b4fc' }}>
                         {categoryShort}
                     </span>
                 </div>
 
                 {/* Title */}
-                <h3 className={`text-sm sm:text-base font-bold mb-2 line-clamp-2 leading-snug transition-colors duration-200 ${isHovered ? 'text-indigo-700' : 'text-slate-800'}`}>
+                <h3 className="text-sm sm:text-[15px] font-bold mb-2.5 line-clamp-2 leading-snug transition-colors duration-200"
+                    style={{ color: isHovered ? '#e0e7ff' : 'rgba(255,255,255,0.85)' }}>
                     {title}
                 </h3>
 
                 {/* Rating */}
                 <div className="flex items-center gap-1.5 mb-3">
-                    <div className="flex text-amber-400 text-sm leading-none">
+                    <div className="flex text-amber-400 text-xs leading-none tracking-widest">
                         {'★'.repeat(Math.round(rating))}
-                        <span className="text-slate-200">{'★'.repeat(Math.max(0, 5 - Math.round(rating)))}</span>
+                        <span style={{ color: 'rgba(255,255,255,0.15)' }}>{'★'.repeat(Math.max(0, 5 - Math.round(rating)))}</span>
                     </div>
-                    <span className="text-xs text-slate-500 font-medium">
-                        {rating.toFixed(1)} <span className="text-slate-400">({reviews})</span>
+                    <span className="text-xs font-medium" style={{ color: 'rgba(255,255,255,0.4)' }}>
+                        {rating.toFixed(1)} ({reviews})
                     </span>
                 </div>
 
                 {/* AI Reason */}
                 {showReason && reasonText && (
-                    <div className="bg-indigo-50/80 border border-indigo-100 p-3 mb-3 rounded-xl flex-grow">
+                    <div className="p-3 mb-3 rounded-xl flex-grow"
+                        style={{ background: 'rgba(99,102,241,0.1)', border: '1px solid rgba(99,102,241,0.2)' }}>
                         <div className="flex items-center gap-1.5 mb-1">
-                            <svg className="w-3.5 h-3.5 text-indigo-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                            <svg className="w-3.5 h-3.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20" style={{ color: '#818cf8' }}>
                                 <path fillRule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clipRule="evenodd" />
                             </svg>
-                            <span className="text-indigo-700 text-[10px] font-bold uppercase tracking-wider">AI Pick</span>
+                            <span className="text-[9px] font-bold uppercase tracking-widest" style={{ color: '#a5b4fc' }}>AI Pick</span>
                         </div>
-                        <p className="text-indigo-800/80 text-xs leading-relaxed">{reasonText}</p>
+                        <p className="text-xs leading-relaxed" style={{ color: 'rgba(165,180,252,0.7)' }}>{reasonText}</p>
                     </div>
                 )}
 
-                {/* Price + CTA */}
-                <div className={`flex items-center justify-between ${!showReason || !reasonText ? 'mt-auto' : ''}`}>
-                    <div>
-                        {price ? (
-                            <p className="text-lg sm:text-xl font-extrabold text-slate-900 tracking-tight">
-                                {price}
-                            </p>
-                        ) : (
-                            <p className="text-sm text-slate-400 italic">Price N/A</p>
-                        )}
-                    </div>
+                {/* Price + Arrow */}
+                <div className="flex items-center justify-between mt-auto">
+                    {price ? (
+                        <p className="text-lg sm:text-xl font-extrabold tracking-tight" style={{ color: '#e0e7ff' }}>
+                            {price}
+                        </p>
+                    ) : (
+                        <p className="text-sm italic" style={{ color: 'rgba(255,255,255,0.25)' }}>Price N/A</p>
+                    )}
                     <button
                         aria-label={`View details for ${title}`}
-                        className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-200 ${
-                            isHovered ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/30 scale-110' : 'bg-slate-100 text-slate-500'
-                        }`}
                         onClick={(e) => { e.stopPropagation(); onViewDetails(product.product_id); }}
+                        className="w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-200"
+                        style={{
+                            background: isHovered ? 'linear-gradient(135deg,#6366f1,#8b5cf6)' : 'rgba(255,255,255,0.07)',
+                            color: isHovered ? '#fff' : 'rgba(255,255,255,0.4)',
+                            boxShadow: isHovered ? '0 4px 14px rgba(99,102,241,0.4)' : 'none',
+                            transform: isHovered ? 'scale(1.1)' : 'scale(1)',
+                        }}
                     >
                         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
