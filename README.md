@@ -12,12 +12,13 @@ Try searching for products and get personalized recommendations!
 
 ## 📊 Features
 
-- **Hybrid Recommendation Algorithm**: Combines content-based (40%), 
-  collaborative (40%), and popularity (20%) scoring
-- **Real Product Data**: 240K+ products from Amazon/Tokopedia dataset
-- **User Interactions**: 100K+ realistic purchase history for training
-- **REST API**: FastAPI backend with auto-generated Swagger documentation
-- **Modern Frontend**: React with Tailwind CSS, responsive design
+- **Google-Style Live Autocomplete Search**: Real-time Top 5 search suggestions with thumbnail previews, category badges, ratings & keyboard arrow navigation
+- **Hybrid Recommendation Algorithm**: Combines content-based (50%), 
+  co-purchase index (20%), and popularity (30%) scoring
+- **Real Product Data**: 240K+ products dataset with fast JSON indexing
+- **User Interactions**: 100K+ realistic user purchase history
+- **REST API**: FastAPI backend with zero-downtime serverless architecture
+- **Modern Frontend**: React with Tailwind CSS, glassmorphism & responsive layout
 - **ML Model Metrics**: 
   - Precision@5: 38.4%
   - Mean Score: 0.742
