@@ -5,6 +5,7 @@ export const SearchBar = ({ onSearch, loading }) => {
     const [query, setQuery] = useState('');
     const [suggestions, setSuggestions] = useState([]);
     const [showDropdown, setShowDropdown] = useState(false);
+    const [activeIndex, setActiveIndex] = useState(-1);
     const containerRef = useRef(null);
 
     // Live search suggestions (Top 5)
@@ -14,6 +15,7 @@ export const SearchBar = ({ onSearch, loading }) => {
             if (res && res.results) {
                 setSuggestions(res.results.slice(0, 5));
                 setShowDropdown(true);
+                setActiveIndex(-1);
             } else {
                 setSuggestions([]);
                 setShowDropdown(false);
@@ -49,9 +51,27 @@ export const SearchBar = ({ onSearch, loading }) => {
         onSearch(selectedText);
     };
 
-    const handleKeyPress = (e) => {
-        if (e.key === 'Enter') {
-            handleSearch();
+    const handleKeyDown = (e) => {
+        if (!showDropdown || suggestions.length === 0) {
+            if (e.key === 'Enter') handleSearch();
+            return;
+        }
+
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            setActiveIndex((prev) => (prev < suggestions.length - 1 ? prev + 1 : 0));
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            setActiveIndex((prev) => (prev > 0 ? prev - 1 : suggestions.length - 1));
+        } else if (e.key === 'Enter') {
+            e.preventDefault();
+            if (activeIndex >= 0 && activeIndex < suggestions.length) {
+                handleSelectSuggestion(suggestions[activeIndex]);
+            } else {
+                handleSearch();
+            }
+        } else if (e.key === 'Escape') {
+            setShowDropdown(false);
         }
     };
 
@@ -84,7 +104,7 @@ export const SearchBar = ({ onSearch, loading }) => {
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
                     onFocus={() => query.trim().length >= 1 && suggestions.length > 0 && setShowDropdown(true)}
-                    onKeyPress={handleKeyPress}
+                    onKeyDown={handleKeyDown}
                     disabled={loading}
                 />
 
@@ -102,16 +122,20 @@ export const SearchBar = ({ onSearch, loading }) => {
                     <div className="absolute top-full left-0 right-0 mt-2 bg-slate-900/95 backdrop-blur-2xl border border-white/15 rounded-2xl shadow-2xl overflow-hidden z-50 animate-fade-in text-left divide-y divide-white/5">
                         <div className="px-4 py-2 bg-white/5 flex items-center justify-between text-xs text-slate-400 font-semibold uppercase tracking-wider">
                             <span>Top 5 Recommendations</span>
-                            <span className="text-indigo-400">Press Enter or Click</span>
+                            <span className="text-indigo-400">↑↓ Navigate | Enter Select</span>
                         </div>
                         {suggestions.map((item, idx) => {
                             const name = item.name || item.product_name;
                             const category = (item.category || 'Tech').split('|')[0];
+                            const isActive = idx === activeIndex;
+
                             return (
                                 <div
                                     key={item.product_id || idx}
                                     onClick={() => handleSelectSuggestion(item)}
-                                    className="px-4 py-3 hover:bg-indigo-600/30 transition-all cursor-pointer flex items-center gap-3 group"
+                                    className={`px-4 py-3 transition-all cursor-pointer flex items-center gap-3 group ${
+                                        isActive ? 'bg-indigo-600/50 text-white' : 'hover:bg-indigo-600/30'
+                                    }`}
                                 >
                                     <div className="w-10 h-10 bg-slate-800 rounded-lg overflow-hidden flex-shrink-0 border border-white/10 flex items-center justify-center p-1">
                                         <img 
