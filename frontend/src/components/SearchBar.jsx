@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { localSearchProducts } from '../utils/localRecommender';
+import { getTopAutocompleteSuggestions } from '../utils/localRecommender';
 
 export const SearchBar = ({ onSearch, loading }) => {
     const [query, setQuery] = useState('');
@@ -11,7 +11,7 @@ export const SearchBar = ({ onSearch, loading }) => {
     // Live search suggestions (Top 5)
     useEffect(() => {
         if (query.trim().length >= 1) {
-            const res = localSearchProducts(query, 5);
+            const res = getTopAutocompleteSuggestions(query, 5);
             if (res && res.results) {
                 setSuggestions(res.results.slice(0, 5));
                 setShowDropdown(true);
