@@ -17,7 +17,7 @@ export const SearchBar = ({ onSearch, loading }) => {
             const rect = inputWrapRef.current.getBoundingClientRect();
             setDropdownStyle({
                 position: 'fixed',
-                top: rect.bottom + 8,
+                top: rect.bottom + 6,
                 left: rect.left,
                 width: rect.width,
                 zIndex: 9999,
@@ -115,72 +115,71 @@ export const SearchBar = ({ onSearch, loading }) => {
         return null;
     };
 
-    // Portal dropdown — renders outside the overflow-hidden hero section
+    // Clean, Simple, Text-Only Search Suggestions Dropdown (Google / Spotlight style)
     const dropdown = showDropdown && suggestions.length > 0 && createPortal(
         <div
-            style={dropdownStyle}
-            className="bg-slate-900/98 backdrop-blur-2xl border border-white/15 rounded-2xl shadow-2xl overflow-hidden animate-fade-in text-left divide-y divide-white/5"
+            style={{
+                ...dropdownStyle,
+                backgroundColor: '#0f172a', // Solid dark slate (no faint gradient washout)
+                borderColor: '#334155',
+            }}
+            className="border rounded-xl shadow-2xl overflow-hidden animate-fade-in text-left divide-y divide-slate-800"
         >
-            <div className="px-4 py-2 bg-white/5 flex items-center justify-between text-[10px] text-slate-400 font-bold uppercase tracking-widest">
-                <span className="flex items-center gap-1.5">
-                    <svg className="w-3.5 h-3.5 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            {/* Header bar */}
+            <div className="px-4 py-2 bg-slate-900/90 flex items-center justify-between text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
+                <span className="flex items-center gap-1.5 text-indigo-400 font-bold">
+                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
-                    Top {suggestions.length} Suggestions
+                    Top Suggestions
                 </span>
-                <span className="text-indigo-400 hidden sm:block">↑↓ Navigate · Enter Select · Esc Close</span>
+                <span className="text-slate-500 text-[10px] hidden sm:inline">Use ↑↓ keys to navigate</span>
             </div>
+
+            {/* Suggestions list (Text-only, clean & crisp) */}
             {suggestions.map((item, idx) => {
                 const name = item.name || item.product_name || 'Product';
-                const category = (item.category || 'Tech').split('|')[0];
+                const category = (item.category || 'Electronics').split('|')[0].trim();
                 const price = formatPrice(item);
                 const isActive = idx === activeIndex;
+
                 return (
                     <div
                         key={item.product_id || idx}
                         onMouseDown={(e) => { e.preventDefault(); handleSelectSuggestion(item); }}
-                        className={`px-4 py-3 cursor-pointer flex items-center gap-3 group transition-all duration-150 ${
-                            isActive ? 'bg-indigo-600/50' : 'hover:bg-white/5'
+                        className={`px-4 py-3 cursor-pointer flex items-center justify-between gap-3 transition-colors duration-150 ${
+                            isActive
+                                ? 'bg-indigo-600 text-white'
+                                : 'bg-slate-900 text-slate-100 hover:bg-slate-800/80 hover:text-white'
                         }`}
                     >
-                        {/* Thumbnail */}
-                        <div className="w-10 h-10 flex-shrink-0 bg-slate-800 rounded-lg overflow-hidden border border-white/10 flex items-center justify-center p-0.5">
-                            <img
-                                src={item.img_link || 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=200'}
-                                alt={name}
-                                className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-300"
-                                onError={(e) => { e.target.src = 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=200'; }}
-                            />
-                        </div>
-
-                        {/* Info */}
-                        <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-1.5 mb-0.5">
-                                <span className="text-[9px] font-bold uppercase tracking-wider bg-indigo-500/25 text-indigo-300 px-1.5 py-0.5 rounded border border-indigo-400/20 whitespace-nowrap">
-                                    {category}
-                                </span>
-                                {item.rating && (
-                                    <span className="text-[10px] text-amber-400 font-semibold whitespace-nowrap">
-                                        ★ {parseFloat(item.rating).toFixed(1)}
-                                    </span>
-                                )}
-                            </div>
-                            <p className={`text-sm font-medium truncate leading-snug ${isActive ? 'text-white' : 'text-slate-200 group-hover:text-white'} transition-colors`}>
+                        {/* Left: Search Icon + Title + Category */}
+                        <div className="flex items-center gap-3 min-w-0 flex-1">
+                            <svg className={`w-4 h-4 flex-shrink-0 ${isActive ? 'text-white' : 'text-slate-400'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
+                            
+                            <span className="text-sm font-semibold truncate text-white leading-snug">
                                 {name}
-                            </p>
+                            </span>
+
+                            <span className={`text-[10px] font-bold px-2 py-0.5 rounded flex-shrink-0 uppercase tracking-wide ${
+                                isActive 
+                                    ? 'bg-white/20 text-white' 
+                                    : 'bg-indigo-950/80 text-indigo-300 border border-indigo-800/50'
+                            }`}>
+                                {category}
+                            </span>
                         </div>
 
-                        {/* Price */}
-                        <div className="flex-shrink-0 text-right">
-                            {price && (
-                                <span className="text-sm font-bold text-emerald-400 block">
+                        {/* Right: Price */}
+                        {price && (
+                            <div className="flex-shrink-0 text-right">
+                                <span className={`text-sm font-bold ${isActive ? 'text-emerald-200' : 'text-emerald-400'}`}>
                                     {price}
                                 </span>
-                            )}
-                            <svg className="w-4 h-4 text-slate-600 group-hover:text-indigo-400 ml-auto transition-colors mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                            </svg>
-                        </div>
+                            </div>
+                        )}
                     </div>
                 );
             })}
@@ -200,9 +199,9 @@ export const SearchBar = ({ onSearch, loading }) => {
 
                 <input
                     type="text"
-                    className="w-full pl-11 pr-10 py-4 bg-white/10 border border-white/20 rounded-xl
-                             focus:outline-none focus:bg-white/15 focus:border-indigo-400/60 focus:ring-4
-                             focus:ring-indigo-500/20 text-white placeholder-slate-400 text-base
+                    className="w-full pl-11 pr-10 py-3.5 bg-slate-900/90 border border-slate-700 rounded-xl
+                             focus:outline-none focus:bg-slate-900 focus:border-indigo-500 focus:ring-2
+                             focus:ring-indigo-500/30 text-white placeholder-slate-400 text-base
                              transition-all duration-200"
                     placeholder="Search laptops, phones, headphones..."
                     value={query}
@@ -222,7 +221,7 @@ export const SearchBar = ({ onSearch, loading }) => {
                 {query && (
                     <button
                         onMouseDown={(e) => { e.preventDefault(); setQuery(''); setSuggestions([]); setShowDropdown(false); }}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center rounded-full text-slate-400 hover:text-white hover:bg-white/20 transition-all text-xs font-bold"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center rounded-full text-slate-400 hover:text-white hover:bg-slate-800 transition-all text-xs font-bold"
                         title="Clear search"
                     >
                         ✕
@@ -232,11 +231,10 @@ export const SearchBar = ({ onSearch, loading }) => {
 
             {/* Search Button */}
             <button
-                className="px-6 sm:px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl
-                         hover:from-blue-500 hover:to-indigo-500 active:scale-95 transition-all duration-200
-                         font-semibold shadow-lg shadow-blue-600/30 hover:shadow-blue-500/40
-                         disabled:from-slate-600 disabled:to-slate-700 disabled:shadow-none disabled:cursor-not-allowed
-                         flex items-center justify-center gap-2 min-w-[120px] sm:min-w-[140px]
+                className="px-6 sm:px-8 py-3.5 bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white rounded-xl
+                         transition-all duration-200 font-semibold shadow-md shadow-indigo-600/30
+                         disabled:bg-slate-700 disabled:shadow-none disabled:cursor-not-allowed
+                         flex items-center justify-center gap-2 min-w-[120px] sm:min-w-[130px]
                          text-sm sm:text-base"
                 onClick={() => handleSearch()}
                 disabled={loading}
