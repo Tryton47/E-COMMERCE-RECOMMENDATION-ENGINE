@@ -4,29 +4,41 @@ import { ProductCard } from './ProductCard';
 export const ProductGrid = ({ products, title, loading, onViewDetails, showReason = false }) => {
     if (loading) {
         return (
-            <div className="text-center py-12">
-                <div className="inline-block">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+            <div className="mb-12">
+                <div className="h-8 w-64 bg-slate-200 rounded-lg animate-pulse mb-6"></div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    {[1, 2, 3, 4].map((i) => (
+                        <div key={i} className="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs h-96 flex flex-col justify-between animate-pulse">
+                            <div className="w-full h-48 bg-slate-100 rounded-xl mb-4"></div>
+                            <div className="h-4 bg-slate-100 rounded w-1/3 mb-2"></div>
+                            <div className="h-6 bg-slate-100 rounded w-3/4 mb-4"></div>
+                            <div className="flex justify-between items-center mt-auto">
+                                <div className="h-6 bg-slate-100 rounded w-1/2"></div>
+                                <div className="h-8 w-8 bg-slate-100 rounded-full"></div>
+                            </div>
+                        </div>
+                    ))}
                 </div>
-                <p className="text-gray-500 mt-4">Loading...</p>
             </div>
         );
     }
 
     if (!products || products.length === 0) {
-        return (
-            <div className="text-center py-12">
-                <p className="text-gray-500 text-lg">No products found. Try another search!</p>
-            </div>
-        );
+        return null;
     }
 
     return (
         <div className="mb-12">
-            <h2 className="text-3xl font-bold text-gray-800 mb-6">
-                {title} ({products.length})
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-extrabold text-slate-800 tracking-tight flex items-center gap-2">
+                    {title}
+                    <span className="text-xs font-bold text-indigo-600 bg-indigo-50 border border-indigo-100 px-2.5 py-0.5 rounded-full">
+                        {products.length} Items
+                    </span>
+                </h2>
+            </div>
+            
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                 {products.map((product) => (
                     <ProductCard
                         key={product.product_id}
