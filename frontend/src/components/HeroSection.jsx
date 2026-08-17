@@ -1,6 +1,8 @@
 import React from 'react';
 import { SearchBar } from './SearchBar';
 
+const QUICK_TAGS = ['iPhone', 'MacBook', 'Headphones', 'Monitor', 'Charger', 'Mouse'];
+
 export const HeroSection = ({ onSearch, loading }) => {
     return (
         <div className="relative overflow-hidden bg-slate-900 text-white pb-20 pt-24 lg:pt-32">
@@ -12,24 +14,38 @@ export const HeroSection = ({ onSearch, loading }) => {
 
             <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 z-10 text-center animate-fade-in-up">
                 <div className="inline-block px-4 py-1.5 rounded-full border border-blue-500/30 bg-blue-500/10 backdrop-blur-sm text-sm font-medium text-blue-300 mb-6">
-                    ✨ Advanced Recommendation Engine
+                    ✨ Advanced Hybrid Recommendation Engine
                 </div>
-                <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-6 bg-clip-text text-transparent bg-gradient-to-r from-blue-200 via-white to-blue-200">
+                <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-6 bg-clip-text text-transparent bg-gradient-to-r from-blue-200 via-white to-indigo-200">
                     Discover Your Next
                     <br className="hidden md:block" /> Favorite Product
                 </h1>
-                <p className="max-w-2xl mx-auto text-xl text-slate-300 mb-12">
+                <p className="max-w-2xl mx-auto text-xl text-slate-300 mb-10 leading-relaxed font-normal">
                     Experience AI-driven hybrid recommendations tailored just for you based on deep content analysis and collaborative filtering.
                 </p>
 
-                <div className="max-w-3xl mx-auto backdrop-blur-xl bg-white/5 p-4 rounded-2xl border border-white/10 shadow-2xl">
+                <div className="max-w-3xl mx-auto backdrop-blur-xl bg-white/5 p-4 rounded-2xl border border-white/10 shadow-2xl mb-6">
                     <SearchBar onSearch={onSearch} loading={loading} />
+                </div>
+
+                {/* Quick Search Suggestions */}
+                <div className="flex flex-wrap items-center justify-center gap-2 text-xs text-slate-400">
+                    <span className="font-semibold text-slate-300">Popular Searches:</span>
+                    {QUICK_TAGS.map((tag) => (
+                        <button
+                            key={tag}
+                            onClick={() => onSearch(tag)}
+                            className="px-3 py-1 bg-white/10 hover:bg-indigo-600 hover:text-white rounded-full transition-colors border border-white/10 cursor-pointer"
+                        >
+                            {tag}
+                        </button>
+                    ))}
                 </div>
             </div>
             
             {/* Wave Decorator */}
             <div className="absolute bottom-0 left-0 right-0">
-                <svg className="w-full h-12 lg:h-24 fill-gray-50" viewBox="0 0 1200 120" preserveAspectRatio="none">
+                <svg className="w-full h-12 lg:h-24 fill-slate-50" viewBox="0 0 1200 120" preserveAspectRatio="none">
                     <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V120H0V95.8C59.71,118.08,130.83,119.52,187.9,109.18Z"></path>
                 </svg>
             </div>
