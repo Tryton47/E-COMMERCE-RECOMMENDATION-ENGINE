@@ -50,8 +50,32 @@ def get_products():
             print("[LAZY WARNING] No product data file found! Returning empty list.")
             _products = []
 
-        # Pre-compute lowercase search text once
+        # Pre-compute search text and normalize numerical data fields
         for p in _products:
+            p['name'] = p.get('name') or p.get('product_name') or 'Tech Product'
+            p['product_name'] = p.get('product_name') or p.get('name') or 'Tech Product'
+
+            # Parse numeric price safely
+            raw_price = p.get('price') or p.get('discounted_price') or p.get('actual_price')
+            if isinstance(raw_price, (int, float)) and not (isinstance(raw_price, float) and (raw_price != raw_price)):
+                p['price'] = float(raw_price)
+            elif isinstance(raw_price, str):
+                cleaned_p = ''.join(c for c in raw_price if c.isdigit() or c == '.')
+                try:
+                    p['price'] = float(cleaned_p) if cleaned_p else 49.99
+                except ValueError:
+                    p['price'] = 49.99
+            else:
+                p['price'] = 49.99
+
+            # Parse review count safely
+            raw_rev = p.get('num_reviews') or p.get('rating_count') or 1250
+            if isinstance(raw_rev, (int, float)):
+                p['num_reviews'] = int(raw_rev)
+            else:
+                cleaned_rev = ''.join(c for c in str(raw_rev) if c.isdigit())
+                p['num_reviews'] = int(cleaned_rev) if cleaned_rev else 1250
+
             p['_search'] = (
                 str(p.get('product_name', '')).lower() + ' ' +
                 str(p.get('category', '')).lower() + ' ' +
