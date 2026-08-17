@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 
 const CATEGORY_IMAGES = {
     laptop: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=600&auto=format&fit=crop&q=80',
@@ -45,16 +45,50 @@ const safeReviews = (item) => {
     const r = item.num_reviews || item.rating_count;
     if (typeof r === 'number') return r.toLocaleString();
     if (typeof r === 'string') return r;
-    return '1,2k';
+    return '1.2k';
+};
+
+// Arc Gauge SVG component for AI Match Percentage
+const ScoreArcGauge = ({ scorePercent }) => {
+    const radius = 12;
+    const circumference = 2 * Math.PI * radius;
+    const strokeDashoffset = circumference - (scorePercent / 100) * circumference;
+
+    return (
+        <div className="flex items-center gap-1.5 bg-slate-900/90 border border-emerald-500/30 px-2.5 py-1 rounded-full shadow-md backdrop-blur-md">
+            <svg className="w-4 h-4 transform -rotate-90" viewBox="0 0 32 32">
+                <circle
+                    cx="16" cy="16" r={radius}
+                    stroke="rgba(255,255,255,0.1)"
+                    strokeWidth="3.5" fill="transparent"
+                />
+                <circle
+                    cx="16" cy="16" r={radius}
+                    stroke="#10b981"
+                    strokeWidth="3.5"
+                    fill="transparent"
+                    strokeDasharray={circumference}
+                    strokeDashoffset={strokeDashoffset}
+                    strokeLinecap="round"
+                    className="transition-all duration-700 ease-out"
+                />
+            </svg>
+            <span className="text-[11px] font-bold text-emerald-400">
+                {scorePercent}%
+            </span>
+        </div>
+    );
 };
 
 export const ProductCard = ({ product, onViewDetails, showReason = false }) => {
     const [imgError, setImgError] = useState(false);
+    const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
     const [isHovered, setIsHovered] = useState(false);
+    const cardRef = useRef(null);
 
     const title = product.name || product.product_name || 'Tech Product';
     const categoryFull = product.category || 'Electronics';
-    const categoryShort = categoryFull.split('|')[0];
+    const categoryShort = categoryFull.split('|')[0].trim();
     const imageSrc = (!imgError && product.img_link && product.img_link.startsWith('http'))
         ? product.img_link
         : getFallbackImage(categoryFull, title);
@@ -62,121 +96,130 @@ export const ProductCard = ({ product, onViewDetails, showReason = false }) => {
     const price = safePrice(product);
     const rating = safeRating(product);
     const reviews = safeReviews(product);
-    const matchPercent = product.score ? (product.score * 100).toFixed(0) : null;
+    const matchPercent = product.score ? Math.round(product.score * 100) : null;
     const reasonText = product.reason || product.recommendation_reason;
     const discount = product.discount_percentage;
 
+    // Spotlight cursor tracking
+    const handleMouseMove = (e) => {
+        if (!cardRef.current) return;
+        const rect = cardRef.current.getBoundingClientRect();
+        setMousePos({
+            x: e.clientX - rect.left,
+            y: e.clientY - rect.top,
+        });
+    };
+
     return (
         <div
+            ref={cardRef}
             onClick={() => onViewDetails(product.product_id)}
+            onMouseMove={handleMouseMove}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
-            className="group flex flex-col h-full relative cursor-pointer rounded-2xl overflow-hidden transition-all duration-300"
+            className="group relative flex flex-col h-full rounded-2xl overflow-hidden cursor-pointer transition-all duration-300"
             style={{
-                background: isHovered
-                    ? 'linear-gradient(145deg, rgba(30,35,60,0.98), rgba(20,25,50,0.98))'
-                    : 'linear-gradient(145deg, rgba(22,27,48,0.95), rgba(15,19,40,0.95))',
-                border: isHovered
-                    ? '1px solid rgba(99,102,241,0.5)'
-                    : '1px solid rgba(255,255,255,0.08)',
+                backgroundColor: '#0f172a',
+                border: isHovered ? '1px solid rgba(99, 102, 241, 0.4)' : '1px solid rgba(255, 255, 255, 0.08)',
                 boxShadow: isHovered
-                    ? '0 20px 60px rgba(99,102,241,0.2), 0 0 0 1px rgba(99,102,241,0.2)'
-                    : '0 4px 24px rgba(0,0,0,0.3)',
-                transform: isHovered ? 'translateY(-6px)' : 'translateY(0)',
+                    ? '0 12px 30px -10px rgba(99, 102, 241, 0.25), 0 0 0 1px rgba(99, 102, 241, 0.2)'
+                    : '0 4px 20px rgba(0, 0, 0, 0.4)',
+                transform: isHovered ? 'translateY(-4px)' : 'translateY(0)',
             }}
         >
-            {/* AI Match badge */}
+            {/* Interactive Spotlight Cursor Gradient Overlay */}
+            {isHovered && (
+                <div
+                    className="pointer-events-none absolute -inset-px rounded-2xl transition-opacity duration-300 z-0"
+                    style={{
+                        background: `radial-gradient(400px circle at ${mousePos.x}px ${mousePos.y}px, rgba(99, 102, 241, 0.15), transparent 80%)`,
+                    }}
+                />
+            )}
+
+            {/* AI Match Gauge */}
             {showReason && matchPercent && (
-                <div className="absolute top-3 right-3 z-10 text-[10px] font-extrabold px-2.5 py-1 rounded-full flex items-center gap-1"
-                    style={{ background: 'linear-gradient(135deg,#6366f1,#8b5cf6)', color: '#fff', boxShadow: '0 4px 12px rgba(99,102,241,0.4)' }}>
-                    ✨ {matchPercent}%
+                <div className="absolute top-3 right-3 z-10">
+                    <ScoreArcGauge scorePercent={matchPercent} />
                 </div>
             )}
 
-            {/* Discount badge */}
+            {/* Discount Badge */}
             {discount && (
-                <div className="absolute top-3 left-3 z-10 text-[10px] font-bold px-2 py-0.5 rounded-full"
-                    style={{ background: 'rgba(16,185,129,0.2)', border: '1px solid rgba(16,185,129,0.4)', color: '#6ee7b7' }}>
+                <div className="absolute top-3 left-3 z-10 text-[10px] font-bold px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
                     {discount} OFF
                 </div>
             )}
 
-            {/* Image area */}
-            <div className="w-full h-48 sm:h-52 flex items-center justify-center p-5 relative overflow-hidden transition-colors duration-300"
-                style={{ background: isHovered ? 'rgba(99,102,241,0.08)' : 'rgba(255,255,255,0.03)' }}>
+            {/* Product Image */}
+            <div className="w-full h-48 sm:h-52 flex items-center justify-center p-6 relative overflow-hidden bg-slate-900/60 z-10">
                 <img
                     src={imageSrc}
                     alt={title}
                     onError={() => setImgError(true)}
-                    className="w-full h-full object-contain drop-shadow-lg transition-transform duration-500"
-                    style={{ transform: isHovered ? 'scale(1.1)' : 'scale(1)' }}
+                    className="w-full h-full object-contain drop-shadow-md transition-transform duration-500 ease-out"
+                    style={{ transform: isHovered ? 'scale(1.08)' : 'scale(1)' }}
                     loading="lazy"
                 />
             </div>
 
-            {/* Divider */}
-            <div style={{ height: '1px', background: isHovered ? 'rgba(99,102,241,0.3)' : 'rgba(255,255,255,0.06)', transition: 'background 0.3s' }} />
+            {/* Subtle Divider */}
+            <div className="h-[1px] w-full bg-slate-800/80 z-10" />
 
-            {/* Content */}
-            <div className="p-4 sm:p-5 flex flex-col flex-grow">
-                {/* Category chip */}
+            {/* Card Content */}
+            <div className="p-4 sm:p-5 flex flex-col flex-grow z-10">
+                {/* Category Chip */}
                 <div className="mb-2">
-                    <span className="text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full"
-                        style={{ background: 'rgba(99,102,241,0.18)', border: '1px solid rgba(99,102,241,0.3)', color: '#a5b4fc' }}>
+                    <span className="text-[10px] font-semibold uppercase tracking-wider text-indigo-300 bg-indigo-950/70 border border-indigo-800/40 px-2 py-0.5 rounded">
                         {categoryShort}
                     </span>
                 </div>
 
-                {/* Title */}
-                <h3 className="text-sm sm:text-[15px] font-bold mb-2.5 line-clamp-2 leading-snug transition-colors duration-200"
-                    style={{ color: isHovered ? '#e0e7ff' : 'rgba(255,255,255,0.85)' }}>
+                {/* Product Title */}
+                <h3 className="text-sm sm:text-base font-semibold mb-2 line-clamp-2 leading-snug text-white group-hover:text-indigo-200 transition-colors">
                     {title}
                 </h3>
 
                 {/* Rating */}
                 <div className="flex items-center gap-1.5 mb-3">
-                    <div className="flex text-amber-400 text-xs leading-none tracking-widest">
+                    <div className="flex text-amber-400 text-xs tracking-wider">
                         {'★'.repeat(Math.round(rating))}
-                        <span style={{ color: 'rgba(255,255,255,0.15)' }}>{'★'.repeat(Math.max(0, 5 - Math.round(rating)))}</span>
+                        <span className="text-slate-700">{'★'.repeat(Math.max(0, 5 - Math.round(rating)))}</span>
                     </div>
-                    <span className="text-xs font-medium" style={{ color: 'rgba(255,255,255,0.4)' }}>
-                        {rating.toFixed(1)} ({reviews})
+                    <span className="text-xs text-slate-400 font-medium">
+                        {rating.toFixed(1)} <span className="text-slate-500">({reviews})</span>
                     </span>
                 </div>
 
-                {/* AI Reason */}
+                {/* AI Recommendation Reason (if enabled) */}
                 {showReason && reasonText && (
-                    <div className="p-3 mb-3 rounded-xl flex-grow"
-                        style={{ background: 'rgba(99,102,241,0.1)', border: '1px solid rgba(99,102,241,0.2)' }}>
+                    <div className="p-3 mb-3 rounded-lg bg-indigo-950/40 border border-indigo-800/30 flex-grow">
                         <div className="flex items-center gap-1.5 mb-1">
-                            <svg className="w-3.5 h-3.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20" style={{ color: '#818cf8' }}>
-                                <path fillRule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clipRule="evenodd" />
-                            </svg>
-                            <span className="text-[9px] font-bold uppercase tracking-widest" style={{ color: '#a5b4fc' }}>AI Pick</span>
+                            <span className="w-1.5 h-1.5 rounded-full bg-indigo-400"></span>
+                            <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-300">Match Context</span>
                         </div>
-                        <p className="text-xs leading-relaxed" style={{ color: 'rgba(165,180,252,0.7)' }}>{reasonText}</p>
+                        <p className="text-xs text-indigo-200/80 leading-relaxed">{reasonText}</p>
                     </div>
                 )}
 
-                {/* Price + Arrow */}
-                <div className="flex items-center justify-between mt-auto">
+                {/* Price + Action Button */}
+                <div className="flex items-center justify-between mt-auto pt-2">
                     {price ? (
-                        <p className="text-lg sm:text-xl font-extrabold tracking-tight" style={{ color: '#e0e7ff' }}>
+                        <p className="text-lg font-bold text-emerald-400 tracking-tight">
                             {price}
                         </p>
                     ) : (
-                        <p className="text-sm italic" style={{ color: 'rgba(255,255,255,0.25)' }}>Price N/A</p>
+                        <p className="text-xs text-slate-500 italic">Price N/A</p>
                     )}
+
                     <button
                         aria-label={`View details for ${title}`}
                         onClick={(e) => { e.stopPropagation(); onViewDetails(product.product_id); }}
-                        className="w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-200"
-                        style={{
-                            background: isHovered ? 'linear-gradient(135deg,#6366f1,#8b5cf6)' : 'rgba(255,255,255,0.07)',
-                            color: isHovered ? '#fff' : 'rgba(255,255,255,0.4)',
-                            boxShadow: isHovered ? '0 4px 14px rgba(99,102,241,0.4)' : 'none',
-                            transform: isHovered ? 'scale(1.1)' : 'scale(1)',
-                        }}
+                        className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-200 ${
+                            isHovered
+                                ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30 scale-105'
+                                : 'bg-slate-800 text-slate-400 hover:text-white'
+                        }`}
                     >
                         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
