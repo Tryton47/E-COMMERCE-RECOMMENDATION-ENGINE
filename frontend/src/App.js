@@ -77,7 +77,7 @@ function App() {
         <div className="min-h-screen flex flex-col" style={{ background: 'linear-gradient(160deg, #0a0e1a 0%, #0d1224 50%, #0a0e1a 100%)' }}>
 
             {/* Hero */}
-            <HeroSection onSearch={handleSearch} loading={loading} />
+            <HeroSection onSearch={handleSearch} loading={loading} searchQuery={searchQuery} searched={searched} />
 
             {/* Main */}
             <main className="flex-grow w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
