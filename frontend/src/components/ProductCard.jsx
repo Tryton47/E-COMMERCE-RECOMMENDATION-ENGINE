@@ -12,6 +12,12 @@ const CATEGORY_IMAGES = {
     charger: 'https://images.unsplash.com/photo-1583863788434-e58a36330cf0?w=600&auto=format&fit=crop&q=80',
     keyboard: 'https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=600&auto=format&fit=crop&q=80',
     tablet: 'https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=600&auto=format&fit=crop&q=80',
+    fashion: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=600&auto=format&fit=crop&q=80',
+    shoe: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&auto=format&fit=crop&q=80',
+    book: 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=600&auto=format&fit=crop&q=80',
+    beauty: 'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?w=600&auto=format&fit=crop&q=80',
+    sport: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=600&auto=format&fit=crop&q=80',
+    furniture: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=600&auto=format&fit=crop&q=80',
     default: 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?w=600&auto=format&fit=crop&q=80'
 };
 
@@ -48,38 +54,6 @@ const safeReviews = (item) => {
     return '1.2k';
 };
 
-// Arc Gauge SVG component for AI Match Percentage
-const ScoreArcGauge = ({ scorePercent }) => {
-    const radius = 12;
-    const circumference = 2 * Math.PI * radius;
-    const strokeDashoffset = circumference - (scorePercent / 100) * circumference;
-
-    return (
-        <div className="flex items-center gap-1.5 bg-slate-900/90 border border-emerald-500/30 px-2.5 py-1 rounded-full shadow-md backdrop-blur-md">
-            <svg className="w-4 h-4 transform -rotate-90" viewBox="0 0 32 32">
-                <circle
-                    cx="16" cy="16" r={radius}
-                    stroke="rgba(255,255,255,0.1)"
-                    strokeWidth="3.5" fill="transparent"
-                />
-                <circle
-                    cx="16" cy="16" r={radius}
-                    stroke="#10b981"
-                    strokeWidth="3.5"
-                    fill="transparent"
-                    strokeDasharray={circumference}
-                    strokeDashoffset={strokeDashoffset}
-                    strokeLinecap="round"
-                    className="transition-all duration-700 ease-out"
-                />
-            </svg>
-            <span className="text-[11px] font-bold text-emerald-400">
-                {scorePercent}%
-            </span>
-        </div>
-    );
-};
-
 export const ProductCard = ({ product, onViewDetails, showReason = false }) => {
     const [imgError, setImgError] = useState(false);
     const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
@@ -104,10 +78,7 @@ export const ProductCard = ({ product, onViewDetails, showReason = false }) => {
     const handleMouseMove = (e) => {
         if (!cardRef.current) return;
         const rect = cardRef.current.getBoundingClientRect();
-        setMousePos({
-            x: e.clientX - rect.left,
-            y: e.clientY - rect.top,
-        });
+        setMousePos({ x: e.clientX - rect.left, y: e.clientY - rect.top });
     };
 
     return (
@@ -117,112 +88,150 @@ export const ProductCard = ({ product, onViewDetails, showReason = false }) => {
             onMouseMove={handleMouseMove}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
-            className="group relative flex flex-col h-full rounded-2xl overflow-hidden cursor-pointer transition-all duration-300"
+            className="group relative flex flex-col h-full rounded-xl cursor-pointer transition-all duration-300 overflow-hidden"
             style={{
                 backgroundColor: '#0f172a',
-                border: isHovered ? '1px solid rgba(99, 102, 241, 0.4)' : '1px solid rgba(255, 255, 255, 0.08)',
+                border: isHovered ? '1px solid rgba(99,102,241,0.45)' : '1px solid rgba(255,255,255,0.07)',
                 boxShadow: isHovered
-                    ? '0 12px 30px -10px rgba(99, 102, 241, 0.25), 0 0 0 1px rgba(99, 102, 241, 0.2)'
-                    : '0 4px 20px rgba(0, 0, 0, 0.4)',
-                transform: isHovered ? 'translateY(-4px)' : 'translateY(0)',
+                    ? '0 16px 40px -12px rgba(99,102,241,0.22)'
+                    : '0 2px 16px rgba(0,0,0,0.35)',
+                transform: isHovered ? 'translateY(-3px)' : 'translateY(0)',
             }}
         >
-            {/* Interactive Spotlight Cursor Gradient Overlay */}
+            {/* Cursor spotlight overlay */}
             {isHovered && (
                 <div
-                    className="pointer-events-none absolute -inset-px rounded-2xl transition-opacity duration-300 z-0"
+                    className="pointer-events-none absolute inset-0 z-0 rounded-xl"
                     style={{
-                        background: `radial-gradient(400px circle at ${mousePos.x}px ${mousePos.y}px, rgba(99, 102, 241, 0.15), transparent 80%)`,
+                        background: `radial-gradient(300px circle at ${mousePos.x}px ${mousePos.y}px, rgba(99,102,241,0.1), transparent 70%)`,
                     }}
                 />
             )}
 
-            {/* AI Match Gauge */}
-            {showReason && matchPercent && (
-                <div className="absolute top-3 right-3 z-10">
-                    <ScoreArcGauge scorePercent={matchPercent} />
-                </div>
-            )}
-
-            {/* Discount Badge */}
-            {discount && (
-                <div className="absolute top-3 left-3 z-10 text-[10px] font-bold px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                    {discount} OFF
-                </div>
-            )}
-
-            {/* Product Image */}
-            <div className="w-full h-48 sm:h-52 flex items-center justify-center p-6 relative overflow-hidden bg-slate-900/60 z-10">
+            {/* ── PRODUCT IMAGE (clean, no floating badges) ── */}
+            <div
+                className="relative w-full flex-shrink-0 overflow-hidden z-10"
+                style={{
+                    height: '180px',
+                    backgroundColor: '#060c1a',
+                }}
+            >
                 <img
                     src={imageSrc}
                     alt={title}
                     onError={() => setImgError(true)}
-                    className="w-full h-full object-contain drop-shadow-md transition-transform duration-500 ease-out"
-                    style={{ transform: isHovered ? 'scale(1.08)' : 'scale(1)' }}
+                    className="w-full h-full object-contain p-5 transition-transform duration-500 ease-out"
+                    style={{ transform: isHovered ? 'scale(1.07)' : 'scale(1)' }}
                     loading="lazy"
                 />
             </div>
 
-            {/* Subtle Divider */}
-            <div className="h-[1px] w-full bg-slate-800/80 z-10" />
+            {/* ── CARD CONTENT ── */}
+            <div className="flex flex-col flex-grow p-4 gap-2 z-10">
 
-            {/* Card Content */}
-            <div className="p-4 sm:p-5 flex flex-col flex-grow z-10">
-                {/* Category Chip */}
-                <div className="mb-2">
-                    <span className="text-[10px] font-semibold uppercase tracking-wider text-indigo-300 bg-indigo-950/70 border border-indigo-800/40 px-2 py-0.5 rounded">
+                {/* Row 1: Category chip + Discount + Match badges — all inline, no overlap */}
+                <div className="flex items-center gap-1.5 flex-wrap">
+                    {/* Category */}
+                    <span
+                        className="text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 rounded"
+                        style={{
+                            background: 'rgba(99,102,241,0.15)',
+                            border: '1px solid rgba(99,102,241,0.3)',
+                            color: '#a5b4fc',
+                        }}
+                    >
                         {categoryShort}
                     </span>
+
+                    {/* Discount badge */}
+                    {discount && (
+                        <span
+                            className="text-[9px] font-bold px-2 py-0.5 rounded"
+                            style={{
+                                background: 'rgba(16,185,129,0.12)',
+                                border: '1px solid rgba(16,185,129,0.3)',
+                                color: '#6ee7b7',
+                            }}
+                        >
+                            {discount} OFF
+                        </span>
+                    )}
+
+                    {/* AI Match badge — only in recommendation view */}
+                    {showReason && matchPercent && (
+                        <span
+                            className="text-[9px] font-bold px-2 py-0.5 rounded ml-auto"
+                            style={{
+                                background: 'rgba(99,102,241,0.2)',
+                                border: '1px solid rgba(99,102,241,0.4)',
+                                color: '#c7d2fe',
+                            }}
+                        >
+                            ✨ {matchPercent}%
+                        </span>
+                    )}
                 </div>
 
-                {/* Product Title */}
-                <h3 className="text-sm sm:text-base font-semibold mb-2 line-clamp-2 leading-snug text-white group-hover:text-indigo-200 transition-colors">
+                {/* Row 2: Product Title */}
+                <h3
+                    className="text-sm font-semibold leading-snug line-clamp-2 transition-colors duration-200"
+                    style={{ color: isHovered ? '#e0e7ff' : 'rgba(255,255,255,0.88)' }}
+                >
                     {title}
                 </h3>
 
-                {/* Rating */}
-                <div className="flex items-center gap-1.5 mb-3">
-                    <div className="flex text-amber-400 text-xs tracking-wider">
+                {/* Row 3: Star rating */}
+                <div className="flex items-center gap-1.5">
+                    <div className="flex text-amber-400 text-xs tracking-wide">
                         {'★'.repeat(Math.round(rating))}
-                        <span className="text-slate-700">{'★'.repeat(Math.max(0, 5 - Math.round(rating)))}</span>
+                        <span style={{ color: 'rgba(255,255,255,0.12)' }}>
+                            {'★'.repeat(Math.max(0, 5 - Math.round(rating)))}
+                        </span>
                     </div>
-                    <span className="text-xs text-slate-400 font-medium">
-                        {rating.toFixed(1)} <span className="text-slate-500">({reviews})</span>
+                    <span className="text-xs" style={{ color: 'rgba(255,255,255,0.35)' }}>
+                        {rating.toFixed(1)} ({reviews})
                     </span>
                 </div>
 
-                {/* AI Recommendation Reason (if enabled) */}
+                {/* Row 4: AI Reason (recommendation view only) */}
                 {showReason && reasonText && (
-                    <div className="p-3 mb-3 rounded-lg bg-indigo-950/40 border border-indigo-800/30 flex-grow">
-                        <div className="flex items-center gap-1.5 mb-1">
-                            <span className="w-1.5 h-1.5 rounded-full bg-indigo-400"></span>
-                            <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-300">Match Context</span>
-                        </div>
-                        <p className="text-xs text-indigo-200/80 leading-relaxed">{reasonText}</p>
+                    <div
+                        className="rounded-lg px-3 py-2"
+                        style={{
+                            background: 'rgba(99,102,241,0.08)',
+                            border: '1px solid rgba(99,102,241,0.18)',
+                        }}
+                    >
+                        <p className="text-[11px] leading-relaxed" style={{ color: 'rgba(165,180,252,0.75)' }}>
+                            {reasonText}
+                        </p>
                     </div>
                 )}
 
-                {/* Price + Action Button */}
-                <div className="flex items-center justify-between mt-auto pt-2">
+                {/* Row 5: Price + Arrow button — always at bottom */}
+                <div className="flex items-center justify-between mt-auto pt-1">
                     {price ? (
-                        <p className="text-lg font-bold text-emerald-400 tracking-tight">
+                        <span className="text-base font-bold tracking-tight" style={{ color: '#4ade80' }}>
                             {price}
-                        </p>
+                        </span>
                     ) : (
-                        <p className="text-xs text-slate-500 italic">Price N/A</p>
+                        <span className="text-xs italic" style={{ color: 'rgba(255,255,255,0.25)' }}>
+                            Price N/A
+                        </span>
                     )}
 
                     <button
                         aria-label={`View details for ${title}`}
                         onClick={(e) => { e.stopPropagation(); onViewDetails(product.product_id); }}
-                        className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-200 ${
-                            isHovered
-                                ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30 scale-105'
-                                : 'bg-slate-800 text-slate-400 hover:text-white'
-                        }`}
+                        className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 transition-all duration-200"
+                        style={{
+                            background: isHovered ? 'rgba(99,102,241,0.85)' : 'rgba(255,255,255,0.06)',
+                            color: isHovered ? '#fff' : 'rgba(255,255,255,0.35)',
+                            transform: isHovered ? 'scale(1.1)' : 'scale(1)',
+                        }}
                     >
-                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3" />
                         </svg>
                     </button>
                 </div>

@@ -31,16 +31,22 @@ def find_file(relative_path):
 
 
 def get_products():
-    """Load products lazily from JSON. Fast: pure Python, no pandas overhead on startup."""
+    """Load products lazily from JSON. Prefers products_v2.json (expanded) over products.json."""
     global _products
     if _products is None:
-        json_path = find_file(os.path.join('data', 'products.json'))
+        # Prefer expanded dataset if it exists
+        json_path = (
+            find_file(os.path.join('data', 'products_v2.json'))
+            or find_file(os.path.join('data', 'products.json'))
+        )
         csv_path = find_file(os.path.join('data', 'products_clean.csv'))
 
         if json_path and os.path.exists(json_path):
-            print(f"[LAZY] Loading products.json from {json_path}...")
+            label = 'products_v2.json' if 'v2' in json_path else 'products.json'
+            print(f"[LAZY] Loading {label} from {json_path}...")
             with open(json_path, 'r', encoding='utf-8') as f:
                 _products = json.load(f)
+            print(f"[LAZY] Loaded {len(_products):,} products from {label}")
         elif csv_path and os.path.exists(csv_path):
             print(f"[LAZY] Falling back to CSV: {csv_path}...")
             import pandas as pd
