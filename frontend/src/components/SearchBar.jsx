@@ -18,7 +18,7 @@ export const SearchBar = ({ onSearch, loading }) => {
             const rect = inputWrapRef.current.getBoundingClientRect();
             setDropdownStyle({
                 position: 'fixed',
-                top: rect.bottom + 6,
+                top: rect.bottom + 8,
                 left: rect.left,
                 width: rect.width,
                 zIndex: 9999,
@@ -128,7 +128,7 @@ export const SearchBar = ({ onSearch, loading }) => {
         return null;
     };
 
-    // High-Contrast Spotlight Command Palette Dropdown
+    // Clean Text Autocomplete Dropdown
     const dropdown = showDropdown && suggestions.length > 0 && createPortal(
         <div
             style={{
@@ -136,19 +136,18 @@ export const SearchBar = ({ onSearch, loading }) => {
                 backgroundColor: '#0f172a',
                 borderColor: '#334155',
             }}
-            className="border rounded-xl shadow-2xl overflow-hidden animate-spring-up text-left divide-y divide-slate-800/80 z-[9999]"
+            className="border rounded-xl shadow-2xl overflow-hidden text-left divide-y divide-slate-800/80 z-[9999]"
         >
-            {/* Command Palette Header */}
+            {/* Header */}
             <div className="px-3.5 py-2 bg-slate-950/90 flex items-center justify-between text-[11px] font-semibold text-slate-400">
                 <span className="flex items-center gap-1.5 text-indigo-400 font-bold tracking-wide">
                     <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                     </svg>
-                    Spotlight Matches ({suggestions.length})
+                    Suggestions ({suggestions.length})
                 </span>
                 <div className="flex items-center gap-2 text-[10px] text-slate-500 font-mono">
-                    <span className="bg-slate-800 px-1.5 py-0.5 rounded border border-slate-700">↑↓</span> navigate
-                    <span className="bg-slate-800 px-1.5 py-0.5 rounded border border-slate-700">↵</span> select
+                    <span className="bg-slate-800 px-1.5 py-0.5 rounded border border-slate-700">↑↓</span> select
                 </div>
             </div>
 
@@ -174,7 +173,7 @@ export const SearchBar = ({ onSearch, loading }) => {
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                             </svg>
 
-                            <span className="text-sm font-semibold truncate text-white leading-snug">
+                            <span className="text-sm font-medium truncate text-white leading-snug">
                                 {name}
                             </span>
 
@@ -202,7 +201,7 @@ export const SearchBar = ({ onSearch, loading }) => {
     );
 
     return (
-        <div ref={containerRef} className="w-full flex flex-col sm:flex-row gap-2.5">
+        <div ref={containerRef} className="w-full flex flex-col sm:flex-row gap-2">
             {/* Input wrapper */}
             <div ref={inputWrapRef} className="relative flex-1">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none z-10">
@@ -214,11 +213,11 @@ export const SearchBar = ({ onSearch, loading }) => {
                 <input
                     ref={inputRef}
                     type="text"
-                    className="w-full pl-11 pr-14 py-3.5 bg-slate-900/90 border border-slate-700/80 rounded-xl
-                             focus:outline-none focus:bg-slate-900 focus:border-indigo-500 focus:ring-2
+                    className="w-full pl-11 pr-14 py-3 bg-slate-950/90 border border-slate-700/80 rounded-xl
+                             focus:outline-none focus:bg-slate-950 focus:border-indigo-500 focus:ring-2
                              focus:ring-indigo-500/20 text-white placeholder-slate-500 text-sm sm:text-base
                              transition-all duration-200"
-                    placeholder="Search products by keyword..."
+                    placeholder="Search products (e.g. cable, iPhone, headphones)..."
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
                     onFocus={() => {
@@ -243,33 +242,38 @@ export const SearchBar = ({ onSearch, loading }) => {
                             ✕
                         </button>
                     ) : (
-                        <kbd className="hidden sm:inline-block px-1.5 py-0.5 text-[10px] font-mono text-slate-500 bg-slate-800 border border-slate-700 rounded shadow-xs">
+                        <kbd className="hidden sm:inline-block px-1.5 py-0.5 text-[10px] font-mono text-slate-500 bg-slate-900 border border-slate-800 rounded shadow-xs">
                             /
                         </kbd>
                     )}
                 </div>
             </div>
 
-            {/* Action Button */}
+            {/* Action Search Button */}
             <button
-                className="px-6 py-3.5 bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white rounded-xl
+                className="px-6 py-3 bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white rounded-xl
                          transition-all duration-200 font-semibold shadow-md shadow-indigo-600/30
                          disabled:bg-slate-800 disabled:shadow-none disabled:cursor-not-allowed
                          flex items-center justify-center gap-2 min-w-[120px]
-                         text-sm sm:text-base"
+                         text-sm sm:text-base cursor-pointer"
                 onClick={() => handleSearch()}
                 disabled={loading}
             >
                 {loading ? (
                     <>
-                        <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+                        <svg className="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
                             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                         </svg>
                         <span>Searching…</span>
                     </>
                 ) : (
-                    <span>Search</span>
+                    <>
+                        <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                        <span>Search</span>
+                    </>
                 )}
             </button>
 
