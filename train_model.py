@@ -1,16 +1,41 @@
+import json
+import os
 import pandas as pd
 from models.hybrid_recommender import HybridRecommendationEngine
 
 print("="*70)
-print("TRAINING HYBRID RECOMMENDATION ENGINE")
+print("TRAINING HYBRID RECOMMENDATION ENGINE (EXPANDED)")
 print("="*70)
 
 # Load data
 print("\n[1/3] Loading data...")
-products_df = pd.read_csv('data/products_clean.csv')
-interactions_df = pd.read_csv('data/interactions.csv')
+if os.path.exists('data/products_v2.json'):
+    print("  Using expanded data/products_v2.json")
+    with open('data/products_v2.json', 'r', encoding='utf-8') as f:
+        products_data = json.load(f)
+    products_df = pd.DataFrame(products_data)
+elif os.path.exists('data/products.json'):
+    print("  Using data/products.json")
+    with open('data/products.json', 'r', encoding='utf-8') as f:
+        products_data = json.load(f)
+    products_df = pd.DataFrame(products_data)
+else:
+    products_df = pd.read_csv('data/products_clean.csv')
+
+# Ensure standard columns
+if 'product_name' not in products_df.columns:
+    products_df['product_name'] = products_df['name']
+
+if 'price' not in products_df.columns:
+    products_df['price'] = products_df.get('discounted_price', products_df.get('actual_price', 0.0))
+
+# Interactions
+interactions_df = None
+if os.path.exists('data/interactions.csv'):
+    interactions_df = pd.read_csv('data/interactions.csv')
+    print(f"  Interactions: {len(interactions_df)}")
+
 print(f"  Products: {len(products_df)}")
-print(f"  Interactions: {len(interactions_df)}")
 
 # Train model
 print("\n[2/3] Training model...")
