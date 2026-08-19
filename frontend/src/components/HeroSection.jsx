@@ -1,7 +1,7 @@
 import React from 'react';
 import { SearchBar } from './SearchBar';
 
-const QUICK_TAGS = ['iPhone', 'MacBook', 'Headphones', 'Monitor', 'Charger', 'Mouse'];
+const QUICK_TAGS = ['iPhone', 'MacBook', 'Sneakers', 'Watch', 'Headphones', 'Coffee', 'PS5', 'Skincare'];
 
 // Maps search query → clean persona badge & headline (no emojis, pure editorial typography)
 const getPersona = (query) => {
@@ -12,16 +12,32 @@ const getPersona = (query) => {
         return { tag: 'Laptops & Workstations', label: 'Tech Poweruser', sub: `High-performance laptops and hardware for "${query}"` };
     if (/headphone|earphone|earbuds|audio|speaker|airpods|music|sound|wh-/.test(q))
         return { tag: 'Audio & Sound', label: 'Audiophile Collection', sub: `High-fidelity audio equipment for "${query}"` };
+    if (/shoe|sneaker|nike|adidas|ultraboost|boot|footwear/.test(q))
+        return { tag: 'Footwear & Sneakers', label: 'Sneakerhead Picks', sub: `Premium sneakers and lifestyle footwear for "${query}"` };
+    if (/watch|smartwatch|seiko|casio|g-shock|garmin|timepiece/.test(q))
+        return { tag: 'Watches & Timepieces', label: 'Watch Collector', sub: `Luxury timepieces and smart wearable devices for "${query}"` };
+    if (/fashion|jacket|shirt|hoodie|clothing|apparel|jeans|sweater/.test(q))
+        return { tag: 'Apparel & Fashion', label: 'Style & Wardrobe', sub: `Modern apparel and wardrobe essentials for "${query}"` };
+    if (/bag|backpack|duffle|luggage|suitcase|tote/.test(q))
+        return { tag: 'Bags & Carry Gear', label: 'Everyday Carry', sub: `Durable backpacks, travel bags, and EDC gear for "${query}"` };
+    if (/beauty|serum|skincare|cleanser|sunscreen|shaver|hair dryer/.test(q))
+        return { tag: 'Beauty & Skincare', label: 'Self Care & Grooming', sub: `Top-rated skincare formulas and grooming essentials for "${query}"` };
+    if (/fitness|dumbbells|gym|protein|workout|yoga|massage/.test(q))
+        return { tag: 'Fitness & Performance', label: 'Athlete & Training', sub: `High-performance workout equipment and supplements for "${query}"` };
+    if (/gaming|ps5|playstation|xbox|nintendo|switch|console/.test(q))
+        return { tag: 'Gaming & Esports', label: 'Gaming Specialist', sub: `Next-gen consoles, esports peripherals, and setups for "${query}"` };
+    if (/coffee|espresso|grinder|kettle|breville|air fryer|vitamix/.test(q))
+        return { tag: 'Kitchen & Specialty Coffee', label: 'Home Barista & Kitchen', sub: `Specialty brewing equipment and smart kitchen appliances for "${query}"` };
+    if (/book|clean code|habits|programming|reading/.test(q))
+        return { tag: 'Books & Knowledge', label: 'Avid Reader', sub: `Bestselling literature, engineering, and productivity books for "${query}"` };
+    if (/camera|photo|lens|dslr|mirrorless|fujifilm|sony alpha|drone|dji/.test(q))
+        return { tag: 'Cameras & Imaging', label: 'Visual Creator', sub: `Professional cameras, lenses, and aerial drones for "${query}"` };
     if (/cable|charger|adapter|usb|gan|powerbank|anker|baseus/.test(q))
         return { tag: 'Power & Connectivity', label: 'Setup Optimizer', sub: `Premium cables, chargers, and adapters for "${query}"` };
     if (/monitor|display|screen|tv|television/.test(q))
         return { tag: 'Displays & Visuals', label: 'Workspace Creator', sub: `Ultra-wide monitors and displays for "${query}"` };
-    if (/mouse|keyboard|trackpad|gaming/.test(q))
-        return { tag: 'Peripherals & Gear', label: 'Productivity & Gaming', sub: `Precision peripherals matching "${query}"` };
-    if (/tablet|ipad/.test(q))
-        return { tag: 'Tablets & E-Readers', label: 'Tablet Showcase', sub: `Top-rated portable tablets for "${query}"` };
-    if (/camera|photo|lens|dslr|mirrorless/.test(q))
-        return { tag: 'Cameras & Optics', label: 'Photography Gear', sub: `Professional cameras and lenses for "${query}"` };
+    if (/mouse|keyboard|trackpad|keychron/.test(q))
+        return { tag: 'Peripherals & Gear', label: 'Productivity & Setup', sub: `Precision peripherals matching "${query}"` };
     return { tag: 'Catalog Search', label: 'Product Explorer', sub: `Personalized matches for "${query}"` };
 };
 
