@@ -3,26 +3,26 @@ import { SearchBar } from './SearchBar';
 
 const QUICK_TAGS = ['iPhone', 'MacBook', 'Headphones', 'Monitor', 'Charger', 'Mouse'];
 
-// Maps search query → personalized persona + tagline
+// Maps search query → clean persona badge & headline (no emojis, pure editorial typography)
 const getPersona = (query) => {
     const q = query.toLowerCase();
     if (/phone|iphone|samsung|xiaomi|realme|oppo|vivo|smartphone|mobile/.test(q))
-        return { emoji: '📱', label: 'Phone Enthusiast', sub: `Here are the best phones for "${query}"` };
+        return { tag: 'Smartphones & Mobile', label: 'Phone Enthusiast', sub: `Curated mobile devices and accessories for "${query}"` };
     if (/laptop|macbook|notebook|computer|pc|asus|lenovo|dell|hp/.test(q))
-        return { emoji: '💻', label: 'Tech Poweruser', sub: `Top laptops matched for "${query}"` };
+        return { tag: 'Laptops & Workstations', label: 'Tech Poweruser', sub: `High-performance laptops and hardware for "${query}"` };
     if (/headphone|earphone|earbuds|audio|speaker|airpods|music|sound|wh-/.test(q))
-        return { emoji: '🎧', label: 'Audiophile', sub: `Premium audio gear for "${query}"` };
+        return { tag: 'Audio & Sound', label: 'Audiophile Collection', sub: `High-fidelity audio equipment for "${query}"` };
     if (/cable|charger|adapter|usb|gan|powerbank|anker|baseus/.test(q))
-        return { emoji: '🔌', label: 'Setup Optimizer', sub: `Best accessories matched for "${query}"` };
+        return { tag: 'Power & Connectivity', label: 'Setup Optimizer', sub: `Premium cables, chargers, and adapters for "${query}"` };
     if (/monitor|display|screen|tv|television/.test(q))
-        return { emoji: '🖥️', label: 'Workspace Creator', sub: `Top displays curated for "${query}"` };
+        return { tag: 'Displays & Visuals', label: 'Workspace Creator', sub: `Ultra-wide monitors and displays for "${query}"` };
     if (/mouse|keyboard|trackpad|gaming/.test(q))
-        return { emoji: '⌨️', label: 'Productivity Seeker', sub: `Level up your desk for "${query}"` };
+        return { tag: 'Peripherals & Gear', label: 'Productivity & Gaming', sub: `Precision peripherals matching "${query}"` };
     if (/tablet|ipad/.test(q))
-        return { emoji: '📟', label: 'Tablet Enthusiast', sub: `Best tablets picked for "${query}"` };
+        return { tag: 'Tablets & E-Readers', label: 'Tablet Showcase', sub: `Top-rated portable tablets for "${query}"` };
     if (/camera|photo|lens|dslr|mirrorless/.test(q))
-        return { emoji: '📷', label: 'Photography Lover', sub: `Top gear curated for "${query}"` };
-    return { emoji: '🔍', label: 'Product Explorer', sub: `Smart picks for "${query}"` };
+        return { tag: 'Cameras & Optics', label: 'Photography Gear', sub: `Professional cameras and lenses for "${query}"` };
+    return { tag: 'Catalog Search', label: 'Product Explorer', sub: `Personalized matches for "${query}"` };
 };
 
 export const HeroSection = ({ onSearch, loading, searchQuery, searched }) => {
@@ -30,22 +30,21 @@ export const HeroSection = ({ onSearch, loading, searchQuery, searched }) => {
 
     return (
         <div
-            className="relative text-white border-b border-slate-800/60"
+            className="relative text-white border-b border-slate-800/80"
             style={{
-                background: 'radial-gradient(ellipse 80% 50% at 50% -10%, rgba(99,102,241,0.18) 0%, transparent 70%), linear-gradient(180deg, #0d1224 0%, #090d16 100%)',
-                paddingTop: searched ? '2.5rem' : '5rem',
-                paddingBottom: searched ? '2.5rem' : '4rem',
-                transition: 'padding 0.4s ease',
+                background: 'radial-gradient(ellipse 70% 45% at 50% -5%, rgba(99,102,241,0.12) 0%, transparent 65%), linear-gradient(180deg, #0b0f19 0%, #070a12 100%)',
+                paddingTop: searched ? '2.5rem' : '4.5rem',
+                paddingBottom: searched ? '2.5rem' : '3.5rem',
+                transition: 'padding 0.35s ease',
             }}
         >
-            {/* Grid texture — scoped to its own layer, won't mask children */}
+            {/* Subtle precision grid background */}
             <div
-                className="absolute inset-0 pointer-events-none"
+                className="absolute inset-0 pointer-events-none opacity-40"
                 style={{
                     backgroundSize: '32px 32px',
                     backgroundImage:
-                        'linear-gradient(to right, rgba(255,255,255,0.025) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.025) 1px, transparent 1px)',
-                    opacity: 0.6,
+                        'linear-gradient(to right, rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.03) 1px, transparent 1px)',
                 }}
             />
 
@@ -55,40 +54,41 @@ export const HeroSection = ({ onSearch, loading, searchQuery, searched }) => {
                 {persona ? (
                     <div
                         key={searchQuery}
-                        style={{ animation: 'fadeSlideIn 0.45s cubic-bezier(0.16,1,0.3,1) both' }}
+                        style={{ animation: 'fadeSlideIn 0.35s cubic-bezier(0.16,1,0.3,1) both' }}
                     >
-                        <div className="text-4xl sm:text-5xl mb-3" style={{ lineHeight: 1 }}>
-                            {persona.emoji}
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md border border-slate-700 bg-slate-900/80 text-[11px] font-mono uppercase tracking-widest text-indigo-300 mb-3.5">
+                            <span className="w-1.5 h-1.5 rounded-full bg-indigo-400"></span>
+                            {persona.tag}
                         </div>
-                        <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-white mb-2 leading-tight">
+                        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white mb-2 leading-tight">
                             {persona.label}
                         </h1>
-                        <p className="text-sm text-slate-400 mb-6">{persona.sub}</p>
+                        <p className="text-xs sm:text-sm text-slate-400 mb-6">{persona.sub}</p>
                     </div>
                 ) : (
                     /* === DEFAULT HEADLINE (no search yet) === */
-                    <div style={{ animation: 'fadeSlideIn 0.4s cubic-bezier(0.16,1,0.3,1) both' }}>
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-indigo-500/30 bg-indigo-950/60 text-xs font-semibold text-indigo-300 mb-5">
-                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                            AI Recommendation Engine
+                    <div style={{ animation: 'fadeSlideIn 0.35s cubic-bezier(0.16,1,0.3,1) both' }}>
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md border border-slate-800 bg-slate-900/90 text-[11px] font-medium text-slate-300 mb-4">
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                            <span>E-Commerce Discovery Engine</span>
                         </div>
-                        <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-white leading-tight mb-3">
-                            Find Exactly What<br className="hidden sm:block" /> You're Looking For
+                        <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-white leading-tight mb-3">
+                            Smart Product Recommendations
                         </h1>
-                        <p className="text-sm sm:text-base text-slate-400 leading-relaxed max-w-lg mx-auto mb-7">
-                            Smart search powered by hybrid collaborative filtering &amp; AI recommendations.
+                        <p className="text-xs sm:text-sm text-slate-400 leading-relaxed max-w-md mx-auto mb-6">
+                            Instant multi-category search powered by content similarity and collaborative filtering.
                         </p>
                     </div>
                 )}
 
-                {/* Search Bar — always visible, high contrast */}
+                {/* Search Bar Container */}
                 <div
                     className="rounded-xl overflow-visible"
                     style={{
-                        background: 'rgba(15, 23, 42, 0.9)',
-                        border: '1px solid rgba(99, 102, 241, 0.35)',
-                        boxShadow: '0 0 0 4px rgba(99,102,241,0.08), 0 8px 32px rgba(0,0,0,0.5)',
-                        padding: '8px',
+                        background: '#0b1120',
+                        border: '1px solid #1e293b',
+                        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.4)',
+                        padding: '6px',
                     }}
                 >
                     <SearchBar onSearch={onSearch} loading={loading} />
@@ -96,16 +96,16 @@ export const HeroSection = ({ onSearch, loading, searchQuery, searched }) => {
 
                 {/* Quick Tags — only show when not searched */}
                 {!searched && (
-                    <div className="flex flex-wrap items-center justify-center gap-2 mt-5 text-xs">
-                        <span className="font-medium text-slate-500 mr-1">Popular:</span>
+                    <div className="flex flex-wrap items-center justify-center gap-1.5 mt-4 text-xs">
+                        <span className="font-medium text-slate-500 mr-1">Trending:</span>
                         {QUICK_TAGS.map((tag) => (
                             <button
                                 key={tag}
                                 onClick={() => onSearch(tag)}
-                                className="px-3 py-1 rounded-lg transition-all border text-slate-400 font-medium active:scale-95 hover:text-white hover:border-indigo-500/50"
+                                className="px-2.5 py-1 rounded-md transition-colors border text-slate-400 text-xs font-medium active:scale-95 hover:text-white hover:border-slate-600 hover:bg-slate-800/60"
                                 style={{
-                                    background: 'rgba(255,255,255,0.04)',
-                                    border: '1px solid rgba(255,255,255,0.1)',
+                                    background: '#0d1527',
+                                    border: '1px solid #1e293b',
                                 }}
                             >
                                 {tag}
@@ -118,7 +118,7 @@ export const HeroSection = ({ onSearch, loading, searchQuery, searched }) => {
             {/* Inline keyframe for dynamic headline animation */}
             <style>{`
                 @keyframes fadeSlideIn {
-                    from { opacity: 0; transform: translateY(12px); }
+                    from { opacity: 0; transform: translateY(8px); }
                     to   { opacity: 1; transform: translateY(0); }
                 }
             `}</style>
