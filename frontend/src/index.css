@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 /* =============================================
-   BASE RESET & PRECISION TYPOGRAPHY
+   PRECISION DESIGN SYSTEM & CLEAN TYPOGRAPHY
    ============================================= */
 *, *::before, *::after {
     box-sizing: border-box;
@@ -17,112 +17,65 @@ html {
 }
 
 body {
-    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', 'Segoe UI', Roboto, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    background-color: #090d16;
-    color: #f8fafc;
+    background-color: #080c14;
+    color: #f1f5f9;
     overflow-x: hidden;
+    letter-spacing: -0.01em;
 }
 
-/* =============================================
-   ENGINEERING GRID TEXTURE BACKGROUND
-   ============================================= */
+/* Subtle precision background grid texture */
 .bg-grid-pattern {
     background-size: 32px 32px;
     background-image: 
-        linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-        linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+        linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
 }
 
 /* =============================================
-   KEYFRAME ANIMATIONS
+   CLEAN MICRO-ANIMATIONS & TRANSITIONS
    ============================================= */
-
-/* Smooth spring-like entry */
-@keyframes springUp {
-    0% {
-        opacity: 0;
-        transform: translateY(20px) scale(0.98);
-    }
-    60% {
-        opacity: 1;
-        transform: translateY(-2px) scale(1.005);
-    }
-    100% {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
-}
-
-/* Radar pulse for interactive AI graph */
-@keyframes radarPulse {
-    0% {
-        transform: scale(0.95);
-        opacity: 0.8;
-    }
-    50% {
-        transform: scale(1.15);
-        opacity: 0.3;
-    }
-    100% {
-        transform: scale(0.95);
-        opacity: 0.8;
-    }
-}
-
-/* Connecting line flow animation */
-@keyframes dashFlow {
-    to {
-        stroke-dashoffset: -20;
-    }
-}
-
-.animate-spring-up {
-    animation: springUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
-}
-
-.animate-radar-pulse {
-    animation: radarPulse 3s ease-in-out infinite;
-}
-
-.animate-dash-flow {
-    stroke-dasharray: 4 4;
-    animation: dashFlow 1s linear infinite;
-}
-
-/* Shimmer loading */
-.skeleton-dark {
-    background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.03) 75%);
-    background-size: 800px 100%;
-    animation: shimmer 1.5s ease-in-out infinite;
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes shimmer {
-    0% { background-position: -800px 0; }
-    100% { background-position: 800px 0; }
+    0%   { background-position: -600px 0; }
+    100% { background-position: 600px 0; }
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.skeleton-shimmer {
+    background: linear-gradient(90deg, #0f172a 25%, #1e293b 50%, #0f172a 75%);
+    background-size: 600px 100%;
+    animation: shimmer 1.6s ease-in-out infinite;
 }
 
 /* =============================================
-   CUSTOM SCROLLBAR
+   CUSTOM SCROLLBAR & SELECTION
    ============================================= */
 ::-webkit-scrollbar {
     width: 6px;
     height: 6px;
 }
 ::-webkit-scrollbar-track {
-    background: #090d16;
+    background: #080c14;
 }
 ::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.15);
+    background: #1e293b;
     border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-    background: rgba(99, 102, 241, 0.5);
+    background: #334155;
 }
 
-/* Selection */
 ::selection {
-    background-color: rgba(99, 102, 241, 0.4);
+    background-color: rgba(59, 130, 246, 0.35);
     color: #ffffff;
 }
