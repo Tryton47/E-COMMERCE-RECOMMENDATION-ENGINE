@@ -45,35 +45,27 @@ export const HeroSection = ({ onSearch, loading, searchQuery, searched }) => {
     const persona = searched && searchQuery ? getPersona(searchQuery) : null;
 
     return (
-        <div
+        <section
+            aria-label="Search and Discovery Hero"
             className="relative text-white border-b border-slate-800/80"
             style={{
-                background: 'radial-gradient(ellipse 70% 45% at 50% -5%, rgba(99,102,241,0.12) 0%, transparent 65%), linear-gradient(180deg, #0b0f19 0%, #070a12 100%)',
-                paddingTop: searched ? '2.5rem' : '4.5rem',
-                paddingBottom: searched ? '2.5rem' : '3.5rem',
-                transition: 'padding 0.35s ease',
+                backgroundColor: '#080c14',
+                backgroundImage: 'radial-gradient(ellipse 60% 40% at 50% 0%, rgba(59, 130, 246, 0.08) 0%, transparent 70%)',
+                paddingTop: searched ? '2.25rem' : '4.25rem',
+                paddingBottom: searched ? '2.25rem' : '3.5rem',
+                transition: 'padding 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
             }}
         >
-            {/* Subtle precision grid background */}
-            <div
-                className="absolute inset-0 pointer-events-none opacity-40"
-                style={{
-                    backgroundSize: '32px 32px',
-                    backgroundImage:
-                        'linear-gradient(to right, rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.03) 1px, transparent 1px)',
-                }}
-            />
-
             <div className="relative max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 z-10 text-center">
 
-                {/* === DYNAMIC PERSONA HEADLINE (after search) === */}
+                {/* Dynamic Persona or Default Title */}
                 {persona ? (
                     <div
                         key={searchQuery}
-                        style={{ animation: 'fadeSlideIn 0.35s cubic-bezier(0.16,1,0.3,1) both' }}
+                        style={{ animation: 'fadeSlideIn 0.3s cubic-bezier(0.16,1,0.3,1) both' }}
                     >
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md border border-slate-700 bg-slate-900/80 text-[11px] font-mono uppercase tracking-widest text-indigo-300 mb-3.5">
-                            <span className="w-1.5 h-1.5 rounded-full bg-indigo-400"></span>
+                        <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-md border border-slate-700/80 bg-slate-900/90 text-[10px] font-mono uppercase tracking-wider text-slate-300 mb-3">
+                            <span className="w-1.5 h-1.5 rounded-full bg-blue-400"></span>
                             {persona.tag}
                         </div>
                         <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white mb-2 leading-tight">
@@ -82,17 +74,16 @@ export const HeroSection = ({ onSearch, loading, searchQuery, searched }) => {
                         <p className="text-xs sm:text-sm text-slate-400 mb-6">{persona.sub}</p>
                     </div>
                 ) : (
-                    /* === DEFAULT HEADLINE (no search yet) === */
-                    <div style={{ animation: 'fadeSlideIn 0.35s cubic-bezier(0.16,1,0.3,1) both' }}>
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md border border-slate-800 bg-slate-900/90 text-[11px] font-medium text-slate-300 mb-4">
+                    <div style={{ animation: 'fadeSlideIn 0.3s cubic-bezier(0.16,1,0.3,1) both' }}>
+                        <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-md border border-slate-800 bg-slate-900/90 text-[11px] font-medium text-slate-400 mb-3.5">
                             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
                             <span>E-Commerce Discovery Engine</span>
                         </div>
-                        <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-white leading-tight mb-3">
+                        <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-white leading-tight mb-2.5">
                             Smart Product Recommendations
                         </h1>
                         <p className="text-xs sm:text-sm text-slate-400 leading-relaxed max-w-md mx-auto mb-6">
-                            Instant multi-category search powered by content similarity and collaborative filtering.
+                            Instant multi-category discovery powered by content similarity and collaborative filtering.
                         </p>
                     </div>
                 )}
@@ -101,26 +92,25 @@ export const HeroSection = ({ onSearch, loading, searchQuery, searched }) => {
                 <div
                     className="rounded-xl overflow-visible"
                     style={{
-                        background: '#0b1120',
+                        background: '#0d1322',
                         border: '1px solid #1e293b',
-                        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.4)',
                         padding: '6px',
                     }}
                 >
                     <SearchBar onSearch={onSearch} loading={loading} />
                 </div>
 
-                {/* Quick Tags — only show when not searched */}
+                {/* Quick Trending Tags */}
                 {!searched && (
                     <div className="flex flex-wrap items-center justify-center gap-1.5 mt-4 text-xs">
-                        <span className="font-medium text-slate-500 mr-1">Trending:</span>
+                        <span className="font-medium text-slate-500 mr-1 text-[11px]">Trending:</span>
                         {QUICK_TAGS.map((tag) => (
                             <button
                                 key={tag}
                                 onClick={() => onSearch(tag)}
                                 className="px-2.5 py-1 rounded-md transition-colors border text-slate-400 text-xs font-medium active:scale-95 hover:text-white hover:border-slate-600 hover:bg-slate-800/60"
                                 style={{
-                                    background: '#0d1527',
+                                    background: '#0d1322',
                                     border: '1px solid #1e293b',
                                 }}
                             >
@@ -131,13 +121,12 @@ export const HeroSection = ({ onSearch, loading, searchQuery, searched }) => {
                 )}
             </div>
 
-            {/* Inline keyframe for dynamic headline animation */}
             <style>{`
                 @keyframes fadeSlideIn {
-                    from { opacity: 0; transform: translateY(8px); }
+                    from { opacity: 0; transform: translateY(6px); }
                     to   { opacity: 1; transform: translateY(0); }
                 }
             `}</style>
-        </div>
+        </section>
     );
 };
