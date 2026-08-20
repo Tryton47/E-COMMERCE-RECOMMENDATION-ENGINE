@@ -67,7 +67,7 @@ export const ProductCard = ({ product, onViewDetails, showReason = false }) => {
     const [isHovered, setIsHovered] = useState(false);
     const cardRef = useRef(null);
 
-    const title = product.name || product.product_name || 'Tech Product';
+    const title = product.name || product.product_name || 'Product';
     const categoryFull = product.category || 'Electronics';
     const categoryShort = categoryFull.split('|')[0].trim();
     const imageSrc = (!imgError && product.img_link && product.img_link.startsWith('http'))
@@ -82,18 +82,18 @@ export const ProductCard = ({ product, onViewDetails, showReason = false }) => {
     const discount = product.discount_percentage;
 
     return (
-        <div
+        <article
             ref={cardRef}
             onClick={() => onViewDetails(product.product_id)}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
-            className="group relative flex flex-col h-full rounded-xl cursor-pointer transition-all duration-200 overflow-hidden"
+            className="group relative flex flex-col h-full rounded-xl cursor-pointer transition-all duration-150 overflow-hidden"
             style={{
-                backgroundColor: '#0c1222',
+                backgroundColor: '#0c1322',
                 border: isHovered ? '1px solid #3b82f6' : '1px solid #1e293b',
                 boxShadow: isHovered
-                    ? '0 10px 25px -5px rgba(0, 0, 0, 0.5)'
-                    : '0 2px 8px rgba(0, 0, 0, 0.25)',
+                    ? '0 8px 24px -4px rgba(0, 0, 0, 0.5)'
+                    : '0 1px 4px rgba(0, 0, 0, 0.2)',
                 transform: isHovered ? 'translateY(-2px)' : 'translateY(0)',
             }}
         >
@@ -101,7 +101,7 @@ export const ProductCard = ({ product, onViewDetails, showReason = false }) => {
             <div
                 className="relative w-full flex-shrink-0 overflow-hidden"
                 style={{
-                    height: '175px',
+                    height: '170px',
                     backgroundColor: '#070b14',
                     borderBottom: '1px solid #172033',
                 }}
@@ -110,19 +110,19 @@ export const ProductCard = ({ product, onViewDetails, showReason = false }) => {
                     src={imageSrc}
                     alt={title}
                     onError={() => setImgError(true)}
-                    className="w-full h-full object-contain p-4 transition-transform duration-300 ease-out"
-                    style={{ transform: isHovered ? 'scale(1.05)' : 'scale(1)' }}
+                    className="w-full h-full object-contain p-3.5 transition-transform duration-200 ease-out"
+                    style={{ transform: isHovered ? 'scale(1.04)' : 'scale(1)' }}
                     loading="lazy"
                 />
             </div>
 
-            {/* Card Content */}
-            <div className="flex flex-col flex-grow p-4 gap-2.5">
+            {/* Card Body */}
+            <div className="flex flex-col flex-grow p-3.5 gap-2">
 
-                {/* Inline Badges: Category + Discount + Match (Clean, No Emojis) */}
+                {/* Inline Badges: Category + Discount + Match (Clean) */}
                 <div className="flex items-center gap-1.5 flex-wrap">
                     <span
-                        className="text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded"
+                        className="text-[9px] font-mono font-medium uppercase tracking-wider px-1.5 py-0.5 rounded"
                         style={{
                             background: '#111c38',
                             border: '1px solid #1e3a8a',
@@ -134,7 +134,7 @@ export const ProductCard = ({ product, onViewDetails, showReason = false }) => {
 
                     {discount && (
                         <span
-                            className="text-[10px] font-semibold px-2 py-0.5 rounded"
+                            className="text-[9px] font-mono font-medium px-1.5 py-0.5 rounded"
                             style={{
                                 background: '#064e3b',
                                 border: '1px solid #047857',
@@ -147,7 +147,7 @@ export const ProductCard = ({ product, onViewDetails, showReason = false }) => {
 
                     {showReason && matchPercent && (
                         <span
-                            className="text-[10px] font-mono font-medium px-2 py-0.5 rounded ml-auto"
+                            className="text-[9px] font-mono font-medium px-1.5 py-0.5 rounded ml-auto"
                             style={{
                                 background: '#1e1b4b',
                                 border: '1px solid #3730a3',
@@ -161,25 +161,25 @@ export const ProductCard = ({ product, onViewDetails, showReason = false }) => {
 
                 {/* Product Title */}
                 <h3
-                    className="text-sm font-medium leading-snug line-clamp-2 transition-colors duration-150"
+                    className="text-xs sm:text-sm font-medium leading-snug line-clamp-2 transition-colors duration-100"
                     style={{ color: isHovered ? '#ffffff' : '#e2e8f0' }}
                 >
                     {title}
                 </h3>
 
                 {/* Rating & Reviews */}
-                <div className="flex items-center gap-1.5 text-xs text-slate-400">
+                <div className="flex items-center gap-1.5 text-[11px] text-slate-400">
                     <span className="font-semibold text-amber-400">{rating.toFixed(1)}</span>
                     <span className="text-slate-600">·</span>
-                    <span className="text-slate-400">{reviews} reviews</span>
+                    <span>{reviews} reviews</span>
                 </div>
 
-                {/* Reason explanation (recommendation view) */}
+                {/* Recommendation Reason */}
                 {showReason && reasonText && (
                     <div
-                        className="rounded-md px-2.5 py-1.5 text-[11px] leading-relaxed"
+                        className="rounded px-2 py-1 text-[10px] leading-relaxed"
                         style={{
-                            background: '#0e172a',
+                            background: '#090f1e',
                             border: '1px solid #1e293b',
                             color: '#94a3b8',
                         }}
@@ -191,7 +191,7 @@ export const ProductCard = ({ product, onViewDetails, showReason = false }) => {
                 {/* Price & Action Row */}
                 <div className="flex items-center justify-between mt-auto pt-2 border-t border-slate-800/60">
                     {price ? (
-                        <span className="text-base font-bold tracking-tight text-emerald-400">
+                        <span className="text-sm sm:text-base font-bold tracking-tight text-emerald-400 font-mono">
                             {price}
                         </span>
                     ) : (
@@ -203,18 +203,18 @@ export const ProductCard = ({ product, onViewDetails, showReason = false }) => {
                     <button
                         aria-label={`View details for ${title}`}
                         onClick={(e) => { e.stopPropagation(); onViewDetails(product.product_id); }}
-                        className="w-7 h-7 rounded-md flex items-center justify-center flex-shrink-0 transition-colors"
+                        className="w-6 h-6 rounded flex items-center justify-center flex-shrink-0 transition-colors"
                         style={{
                             background: isHovered ? '#2563eb' : '#1e293b',
                             color: isHovered ? '#ffffff' : '#94a3b8',
                         }}
                     >
-                        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+                        <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" />
                         </svg>
                     </button>
                 </div>
             </div>
-        </div>
+        </article>
     );
 };
